@@ -1,9 +1,7 @@
 import javax.swing.*;
-import javax.swing.border.LineBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.geom.Path2D;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -17,33 +15,51 @@ public class Main extends JFrame {
     public Main() throws Exception {
         JPanel contentPane = new JPanel(new BorderLayout());
 
+        // stores all territories
         ArrayList<Territory> allTerritories = new ArrayList<>();
-        ArrayList<Object> p1Territories = new ArrayList<>();
-        ArrayList<Object> p2Territories = new ArrayList<>();
 
         // add svg paths of all territories to map with territory names as the keys
         Map<String, HashMap<String, Object>> paths = Util.getPaths();
 
         // create player objects
-        Player player1 = new Player("player1", Color.CYAN, p1Territories, 4, 3);
-        Player player2 = new Player("player2", Color.MAGENTA, p2Territories, 4, 3);
+        Player player1 = new Player("player1", Color.CYAN, new ArrayList<>() {}, 5, 3);
+        Player player2 = new Player("player2", Color.MAGENTA, new ArrayList<>() {}, 4, 3);
 
         // create territory objects
-        Territory nwt = new Territory("nwt", player1, Util.getPath2d("nwt", paths), 1, player1.colour, 1.0F, new ArrayList<>() {});
-        Territory alberta = new Territory("alberta", player1, Util.getPath2d("alberta", paths), 1, player1.colour, 1.0F, new ArrayList<>() {});
-        Territory alaska = new Territory("alaska", player1, Util.getPath2d("alaska", paths), 1, player1.colour, 1.0F, new ArrayList<>() {});
-        Territory ontario = new Territory("ontario", player1, Util.getPath2d("ontario", paths), 1, player1.colour, 1.0F, new ArrayList<>() {});
+
+        // north america
+        Territory nwt = new Territory("nwt", player1, Util.getPath2d("nwt", paths), 1, 1.0F, new ArrayList<>() {});
+        Territory alberta = new Territory("alberta", player1, Util.getPath2d("alberta", paths), 1, 1.0F, new ArrayList<>() {});
+        Territory alaska = new Territory("alaska", player1, Util.getPath2d("alaska", paths), 1, 1.0F, new ArrayList<>() {});
+        Territory ontario = new Territory("ontario", player1, Util.getPath2d("ontario", paths), 1, 1.0F, new ArrayList<>() {});
+        Territory westernUS = new Territory("western u.s.", player2, Util.getPath2d("westernUS", paths), 1, 1.0F, new ArrayList<>() {});
+        Territory mexico = new Territory("mexico", player2, Util.getPath2d("mexico", paths), 1, 1.0F, new ArrayList<>() {});
+        Territory easternUS = new Territory("eastern u.s.", player2, Util.getPath2d("easternUS", paths), 1, 1.0F, new ArrayList<>() {});
+        Territory easternCanada = new Territory("eastern canada", player2, Util.getPath2d("easternCanada", paths), 1, 1.0F, new ArrayList<>() {});
+        Territory greenland = new Territory("greenland", player1, Util.getPath2d("greenland", paths), 1, 1.0F, new ArrayList<>() {});
 
         // set adjacent territories for each territory
+
+        // north america
         Collections.addAll(nwt.adjacentTerritories, alaska, ontario, alberta);
         Collections.addAll(alberta.adjacentTerritories, alaska, ontario, nwt);
         Collections.addAll(alaska.adjacentTerritories, alberta, nwt); // **add kamchatka once implemented**
-        Collections.addAll(ontario.adjacentTerritories, alberta, nwt);
+        Collections.addAll(ontario.adjacentTerritories, alberta, nwt, easternCanada);
+        Collections.addAll(westernUS.adjacentTerritories, alberta, ontario, mexico, easternUS);
+        Collections.addAll(mexico.adjacentTerritories, westernUS, easternUS); //
+        Collections.addAll(easternUS.adjacentTerritories, easternCanada, ontario, westernUS, mexico); //
+        Collections.addAll(easternCanada.adjacentTerritories, ontario, easternUS);
+        Collections.addAll(greenland.adjacentTerritories, ontario, easternCanada, nwt); //
 
         allTerritories.add(nwt);
         allTerritories.add(alberta);
         allTerritories.add(alaska);
         allTerritories.add(ontario);
+        allTerritories.add(westernUS);
+        allTerritories.add(mexico);
+        allTerritories.add(easternUS);
+        allTerritories.add(easternCanada);
+        allTerritories.add(greenland);
 
         // create map
         mapPanel = new JPanel() {
@@ -65,13 +81,14 @@ public class Main extends JFrame {
                     g2d.setStroke(new BasicStroke(2));
 
                     for (Territory territory : allTerritories) {
-                        g2d.setColor(territory.colour);
+                        g2d.setColor(territory.getColour());
                         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, territory.opacity));
                         g2d.fill(territory.path2d);
                     }
 
                     // create outlines
                     g2d.setColor(Color.BLACK);
+                    g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 1.0F));
                     g2d.setStroke(new BasicStroke(2));
 
                     for (Territory territory : allTerritories) {
@@ -88,22 +105,23 @@ public class Main extends JFrame {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mousePressed(MouseEvent e) {
-                // **note** every path2d shape is rendered again after calling repaint; only alaska is changed since only its opacity value is adjusted
-                if (alaska.path2d.contains(e.getPoint())) {
-                    alaska.opacity = 0.3F;
-                    repaint();
-                } else {
-                    alaska.opacity = 1.0F;
-                    repaint();
+                // **note** every path2d shape is rendered again after calling repaint; only clicked territory is changed since only its opacity value is adjusted
+                for (Territory territory : allTerritories) {
+                    if (territory.path2d.contains(e.getPoint())) {
+                        territory.opacity = 0.3F;
+                        repaint();
+                    } else {
+                        territory.opacity = 1.0F;
+                        repaint();
+                    }
                 }
             }
         });
 
-        mapPanel.setBorder(new LineBorder(Color.BLACK, 2));
         mapPanel.setPreferredSize(new Dimension(1920, 980));
 
         infoPanel = new JPanel();
-        infoPanel.setBorder(new LineBorder(Color.BLACK, 2));
+        infoPanel.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, java.awt.Color.BLACK));
         infoPanel.setPreferredSize(new Dimension(1920, 100));
 
         contentPane.add(mapPanel, BorderLayout.CENTER);

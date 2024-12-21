@@ -59,7 +59,7 @@ public class Util {
             pathIterator.next();
         }
 
-        AffineTransform scaleTransform = AffineTransform.getScaleInstance(0.7, 0.7);
+        AffineTransform scaleTransform = AffineTransform.getScaleInstance(0.75, 0.75);
 
         path2D = (Path2D.Double) scaleTransform.createTransformedShape(path2D);
 
