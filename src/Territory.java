@@ -1,5 +1,6 @@
 import java.awt.*;
 import java.awt.geom.Path2D;
+import java.util.ArrayList;
 
 public class Territory {
     Path2D path2d;
@@ -8,9 +9,9 @@ public class Territory {
     Player parent;
     String name;
     float opacity;
-    Territory[] adjacentTerritories;
+    ArrayList<Territory> adjacentTerritories;
 
-    public Territory(String name, Player parent, Path2D path2d, int troops, Color colour, float opacity, Territory[] adjacentTerritories) {
+    public Territory(String name, Player parent, Path2D path2d, int troops, Color colour, float opacity, ArrayList<Territory> adjacentTerritories) {
         this.name = name;
         this.parent = parent;
         this.path2d = path2d;

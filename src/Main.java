@@ -5,6 +5,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.geom.Path2D;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,10 +29,16 @@ public class Main extends JFrame {
         Player player2 = new Player("player2", Color.MAGENTA, p2Territories, 4, 3);
 
         // create territory objects
-        Territory nwt = new Territory("nwt", player1, Util.getPath2d("nwt", paths), 1, player1.colour, 1.0F, new Territory[] {});
-        Territory alberta = new Territory("alberta", player1, Util.getPath2d("alberta", paths), 1, player1.colour, 1.0F, new Territory[] {});
-        Territory alaska = new Territory("alaska", player1, Util.getPath2d("alaska", paths), 1, player1.colour, 1.0F, new Territory[] {});
-        Territory ontario = new Territory("ontario", player1, Util.getPath2d("ontario", paths), 1, player1.colour, 1.0F, new Territory[] {});
+        Territory nwt = new Territory("nwt", player1, Util.getPath2d("nwt", paths), 1, player1.colour, 1.0F, new ArrayList<>() {});
+        Territory alberta = new Territory("alberta", player1, Util.getPath2d("alberta", paths), 1, player1.colour, 1.0F, new ArrayList<>() {});
+        Territory alaska = new Territory("alaska", player1, Util.getPath2d("alaska", paths), 1, player1.colour, 1.0F, new ArrayList<>() {});
+        Territory ontario = new Territory("ontario", player1, Util.getPath2d("ontario", paths), 1, player1.colour, 1.0F, new ArrayList<>() {});
+
+        // set adjacent territories for each territory
+        Collections.addAll(nwt.adjacentTerritories, alaska, ontario, alberta);
+        Collections.addAll(alberta.adjacentTerritories, alaska, ontario, nwt);
+        Collections.addAll(alaska.adjacentTerritories, alberta, nwt); // **add kamchatka once implemented**
+        Collections.addAll(ontario.adjacentTerritories, alberta, nwt);
 
         allTerritories.add(nwt);
         allTerritories.add(alberta);
