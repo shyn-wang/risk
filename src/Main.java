@@ -10,10 +10,9 @@ import java.util.Map;
 public class Main extends JFrame {
     private JPanel mapPanel;
     private JPanel infoPanel;
-    boolean firstRender = true;
 
     public Main() throws Exception {
-        JPanel contentPane = new JPanel(new BorderLayout());
+        JPanel contentPane = new JPanel(null);
 
         // stores all territories
         ArrayList<Territory> allTerritories = new ArrayList<>();
@@ -22,8 +21,8 @@ public class Main extends JFrame {
         Map<String, HashMap<String, Object>> paths = Util.getPaths();
 
         // create player objects
-        Player player1 = new Player("player1", Color.CYAN, new ArrayList<>() {}, 5, 3);
-        Player player2 = new Player("player2", Color.MAGENTA, new ArrayList<>() {}, 4, 3);
+        Player player1 = new Player("player 1", Color.CYAN, new ArrayList<>() {}, 5, 3, true);
+        Player player2 = new Player("player 2", Color.MAGENTA, new ArrayList<>() {}, 4, 3, true);
 
         // create territory objects
 
@@ -62,7 +61,7 @@ public class Main extends JFrame {
         allTerritories.add(greenland);
 
         // create map
-        mapPanel = new JPanel() {
+        mapPanel = new JPanel(null) {
             // called whenever gui is created/refreshed
             @Override
             protected void paintComponent(Graphics g) {
@@ -95,6 +94,34 @@ public class Main extends JFrame {
                         g2d.draw(territory.path2d);
                     }
 
+
+
+
+
+//                    // Get the dimensions of the panel
+//                    int width = 1920;
+//                    int height = 980;
+//
+//                    // Draw a grid with 20px spacing
+//                    g.setColor(Color.LIGHT_GRAY);
+//
+//                    for (int i = 0; i < width; i += 20) {
+//                        g.drawLine(i, 0, i, height); // Vertical lines
+//                    }
+//                    for (int i = 0; i < height; i += 20) {
+//                        g.drawLine(0, i, width, i); // Horizontal lines
+//                    }
+//
+//                    // Draw coordinate labels (x, y) at grid intersections
+//                    g.setColor(Color.RED);
+//                    g.setFont(new Font("Arial", Font.PLAIN, 10));
+//
+//                    for (int x = 0; x < width; x += 50) {
+//                        for (int y = 0; y < height; y += 50) {
+//                            g.drawString("(" + x + ", " + y + ")", x + 5, y + 15); // Display the coordinates
+//                        }
+//                    }
+
                 } catch (Exception e) {
                     System.err.println("Error parsing path data: " + e.getMessage());
                 }
@@ -118,14 +145,31 @@ public class Main extends JFrame {
             }
         });
 
-        mapPanel.setPreferredSize(new Dimension(1920, 980));
+        mapPanel.setBounds(0, 0, 1920, 980);
 
-        infoPanel = new JPanel();
+        infoPanel = new JPanel(null);
         infoPanel.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, java.awt.Color.BLACK));
-        infoPanel.setPreferredSize(new Dimension(1920, 100));
+        infoPanel.setBounds(0, 980, 1920, 100);
 
-        contentPane.add(mapPanel, BorderLayout.CENTER);
-        contentPane.add(infoPanel, BorderLayout.SOUTH);
+        // create troop count labels
+
+        // north america
+        nwt.createLabel(mapPanel,250, 85);
+        alberta.createLabel(mapPanel, 235, 160);
+        alaska.createLabel(mapPanel, 123, 85);
+        ontario.createLabel(mapPanel, 320, 173);
+        easternCanada.createLabel(mapPanel, 405, 170);
+        greenland.createLabel(mapPanel, 485, 50);
+        westernUS.createLabel(mapPanel, 235, 250);
+        easternUS.createLabel(mapPanel, 333, 265);
+        mexico.createLabel(mapPanel, 255, 365);
+
+        player1.createPanel(infoPanel, 0, 0);
+        player2.createPanel(infoPanel, 110, 0);
+
+
+        contentPane.add(mapPanel);
+        contentPane.add(infoPanel);
 
         // create gui
         setContentPane(contentPane);
