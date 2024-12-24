@@ -15,7 +15,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class Util {
     // converts svg path to path2d shape/coordinates and scales down
-    public static Path2D getPath2d(String territory, Map<String, HashMap<String, Object>> paths) throws Exception {
+    public static Path2D getPath2d(String territory) throws Exception {
+        // add svg paths of all territories to map with territory names as the keys
+        Map<String, HashMap<String, Object>> paths = Util.getPaths();
         String path = (String) paths.get(territory).get("path");
 
         AWTPathProducer pathProducer = new AWTPathProducer();

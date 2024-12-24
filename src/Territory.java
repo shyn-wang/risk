@@ -36,5 +36,7 @@ public class Territory {
     public void updateTroops(int change) {
         troops += change;
         troopsLabel.setText(String.valueOf(troops));
+        parent.deployedTroops += change;
+        parent.deployedtroopCounterLabel.setText("active troops: " + parent.deployedTroops);
     }
 }

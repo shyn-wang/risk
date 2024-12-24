@@ -33,17 +33,17 @@ public class Player {
                 new EmptyBorder(10, 10, 0, 0) // padding
         ));
 
-        this.nameLabel = new JLabel(name);
+        this.nameLabel = new JLabel(this.name);
         this.nameLabel.setFont(new Font("Helvetica", Font.BOLD, 15));
-        statsPanel.add(nameLabel);
+        this.statsPanel.add(nameLabel);
 
-        this.deployedtroopCounterLabel = new JLabel("active troops: " + deployedTroops);
+        this.deployedtroopCounterLabel = new JLabel();
         this.deployedtroopCounterLabel.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        statsPanel.add(deployedtroopCounterLabel);
+        this.statsPanel.add(deployedtroopCounterLabel);
 
-        this.territoryCounterLabel = new JLabel("territories: " + getTotalTerritories());
+        this.territoryCounterLabel = new JLabel();
         this.territoryCounterLabel.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        statsPanel.add(territoryCounterLabel);
+        this.statsPanel.add(territoryCounterLabel);
     }
 
 
@@ -55,13 +55,15 @@ public class Player {
         return territories.size();
     }
 
-    public void createPanel(JPanel displayPanel, int x, int y) {
+    public JPanel initializePanel(int x, int y) {
+        deployedtroopCounterLabel.setText("active troops: " + this.deployedTroops);
+        territoryCounterLabel.setText("territories: " + getTotalTerritories());
         statsPanel.setBounds(x, y, 110, 100);
-        displayPanel.add(statsPanel);
+        return statsPanel;
     }
 
     public void updateLabels() {
         deployedtroopCounterLabel.setText("active troops: " + deployedTroops);
-        deployedtroopCounterLabel.setText("territories: " + getTotalTerritories());
+        territoryCounterLabel.setText("territories: " + getTotalTerritories());
     }
 }
