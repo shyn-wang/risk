@@ -1,16 +1,27 @@
 import javax.swing.*;
 import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class Game {
     int turnCounter;
     ArrayList<Player> players;
     String phase;
     boolean live;
+
+    Territory draftSelectedTerritory;
+    Territory attackStartingTerritory;
+    Territory attackAttackingTerritory;
+
+    Territory atkWinner;
+    int atkTroopsLost;
+    int defTroopsLost;
+
     JPanel roundInfo;
     JLabel turnLabel;
     JLabel phaseLabel;
@@ -23,11 +34,25 @@ public class Game {
     JPanel nextPhaseBtnContainer;
     JButton nextPhaseBtn;
 
+    JPanel attackPhaseInfo;
+    JLabel attackStatus;
+    JLabel selectedTerritories;
+    JButton attackBtn;
+    JPanel attackBtnContainer;
+    JPanel endAttackBtnContainer;
+    JButton endAttackBtn;
+
     public Game(int turnCounter, ArrayList<Player> players, String phase, boolean live) {
         this.turnCounter = turnCounter;
         this.players = players;
         this.phase = phase;
         this.live = live;
+        this.draftSelectedTerritory = null;
+        this.attackStartingTerritory = null;
+        this.attackAttackingTerritory = null;
+        this.atkWinner = null;
+        this.atkTroopsLost = 0;
+        this.defTroopsLost = 0;
 
         // create round info panel
         this.roundInfo = new JPanel(null);
@@ -57,7 +82,7 @@ public class Game {
         ));
 
         this.availableTroops = new JLabel();
-        this.availableTroops.setBounds(50, 22, 150, 20);
+        this.availableTroops.setBounds(30, 22, 150, 20);
         this.availableTroops.setFont(new Font("Helvetica", Font.BOLD, 15));
         this.draftPhaseInfo.add(availableTroops);
 
@@ -80,12 +105,53 @@ public class Game {
 
         this.nextPhaseBtnContainer = new JPanel();
         this.nextPhaseBtnContainer.setOpaque(false);
-        this.nextPhaseBtnContainer.setBounds(730, 12, 200, 100);
+        this.nextPhaseBtnContainer.setBounds(770, 12, 200, 100);
         this.nextPhaseBtnContainer.setVisible(false);
         this.draftPhaseInfo.add(nextPhaseBtnContainer);
 
         this.nextPhaseBtn = new JButton("next phase");
         this.nextPhaseBtnContainer.add(nextPhaseBtn);
+
+        // create attack phase info panel
+        this.attackPhaseInfo = new JPanel(null);
+        this.attackPhaseInfo.setBounds(755, 0, 955, 100);
+        this.attackPhaseInfo.setVisible(false);
+        this.attackPhaseInfo.setBorder(new CompoundBorder(
+                BorderFactory.createMatteBorder(2, 2, 0, 0, Color.BLACK), // top line
+                new EmptyBorder(22, -85, 0, 0) // padding
+        ));
+
+        /*
+        1. select a territory -> select a territory to attack | next phase
+        2. territory 1 vs territory 2 | attack btn
+        */
+        this.attackStatus = new JLabel("select a territory");
+        this.attackStatus.setBounds(30, 22, 200, 20);
+        this.attackStatus.setFont(new Font("Helvetica", Font.BOLD, 15));
+        this.attackPhaseInfo.add(this.attackStatus);
+
+        this.selectedTerritories = new JLabel();
+        this.selectedTerritories.setBounds(250, 22, 250, 20);
+        this.selectedTerritories.setFont(new Font("Helvetica", Font.BOLD, 15));
+        this.attackPhaseInfo.add(this.selectedTerritories);
+
+        this.attackBtnContainer = new JPanel();
+        this.attackBtnContainer.setOpaque(false);
+        this.attackBtnContainer.setBounds(540, 12, 200, 100);
+        this.attackBtnContainer.setVisible(false);
+        this.attackPhaseInfo.add(attackBtnContainer);
+
+        this.attackBtn = new JButton("attack");
+        this.attackBtnContainer.add(attackBtn);
+
+        this.endAttackBtnContainer = new JPanel();
+        this.endAttackBtnContainer.setOpaque(false);
+        this.endAttackBtnContainer.setBounds(770, 12, 200, 100);
+        this.attackPhaseInfo.add(endAttackBtnContainer);
+
+        this.endAttackBtn = new JButton("end attack");
+        this.endAttackBtnContainer.add(endAttackBtn);
+
     }
 
     public JPanel initializeRoundInfoPanel() {
@@ -94,6 +160,12 @@ public class Game {
         phaseLabel.setText("phase: " + phase);
 
         return roundInfo;
+    }
+
+    public void updateRoundInfoPanel() {
+        roundInfo.setBackground(getTurn().colour);
+        turnLabel.setText("turn: " + getTurn().name);
+        phaseLabel.setText("phase: " + phase);
     }
 
     public JPanel initializeDraftPhaseInfoPanel() {
@@ -105,6 +177,12 @@ public class Game {
         }
 
         return draftPhaseInfo;
+    }
+
+    public JPanel initializeAttackPhaseInfoPanel() {
+        attackPhaseInfo.setBackground(getTurn().colour);
+
+        return attackPhaseInfo;
     }
 
     public Player getTurn() {
@@ -128,5 +206,209 @@ public class Game {
         }
 
         return null;
+    }
+
+    public void simulateBattle() {
+        int atkTroops = attackStartingTerritory.troops;
+        int defTroops = attackAttackingTerritory.troops;
+
+        atkWinner = null;
+        atkTroopsLost = 0;
+        defTroopsLost = 0;
+
+        ArrayList<Integer> atkDice = new ArrayList<>();
+        ArrayList<Integer> defDice = new ArrayList<>();
+
+        while (atkTroops >= 1) {
+            atkDice.clear();
+            defDice.clear();
+
+            // check for winner
+            if (atkTroops == 1) { // attacker loss
+                atkWinner = attackAttackingTerritory;
+                attackStartingTerritory.updateTroops(atkTroopsLost * -1);
+                attackAttackingTerritory.updateTroops(defTroopsLost * -1);
+
+                JFrame frame = new JFrame();
+
+                // Create a custom JDialog
+                JDialog dialog = new JDialog(frame, "attack failed", true);  // true makes it modal
+                dialog.setResizable(false);
+                dialog.setSize(300, 250);
+                dialog.setLocationRelativeTo(frame);
+
+
+                dialog.setLayout(new GridLayout(2, 1, 0, 15));
+
+                JTextPane battleReport = new JTextPane();
+
+                // Create a center-aligned style
+                SimpleAttributeSet center = new SimpleAttributeSet();
+                StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+                StyledDocument doc = battleReport.getStyledDocument();
+                doc.setParagraphAttributes(0, 0, center, false);
+
+                battleReport.setSize(400, 175);
+                battleReport.setText("\n" + attackStartingTerritory.name + " -> " + attackAttackingTerritory.name + "\n\nstarting troops: " + (attackStartingTerritory.troops + atkTroopsLost) + "\ntroops lost: " + atkTroopsLost + "\nremaining troops: " + attackStartingTerritory.troops);
+                battleReport.setFont(new Font("Helvetica", Font.PLAIN, 15));
+                battleReport.setOpaque(false);
+                battleReport.setEditable(false);
+                battleReport.setFocusable(false);
+
+                JButton confirmButton = new JButton("confirm");
+
+                dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+
+                confirmButton.addActionListener(e -> {
+                    attackStartingTerritory.opacity = 1.0F;
+                    attackAttackingTerritory.opacity = 1.0F;
+
+                    attackStartingTerritory = null;
+                    attackAttackingTerritory = null;
+
+                    selectedTerritories.setText(null);
+                    attackBtnContainer.setVisible(false);
+                    attackStatus.setText("select a territory");
+                    endAttackBtnContainer.setVisible(true);
+
+                    dialog.dispose();
+                });
+
+                JPanel panel = new JPanel();
+                panel.add(confirmButton);
+
+                dialog.add(battleReport);
+                dialog.add(panel);
+
+                dialog.setVisible(true);
+
+                break;
+
+            } else if (defTroops == 0) { // attacker win
+                atkWinner = attackStartingTerritory;
+                attackStartingTerritory.updateTroops(atkTroopsLost * -1);
+                attackAttackingTerritory.updateTroops(defTroopsLost * -1);
+
+                JFrame frame = new JFrame();
+
+                JComboBox<String> moveTroopsSelector = new JComboBox<>();
+                moveTroopsSelector.addItem("select number of troops to move");
+
+                for (int i = 1; i <= attackStartingTerritory.troops - 1; i++) {
+                    moveTroopsSelector.addItem(String.valueOf(i));
+                }
+
+                // Create a custom JDialog
+                JDialog dialog = new JDialog(frame, "attack successful", true);  // true makes it modal
+                dialog.setResizable(false);
+                dialog.setSize(300, 250);
+                dialog.setLocationRelativeTo(frame);
+
+
+                dialog.setLayout(new GridLayout(2, 1, 0, 15));
+
+                JTextPane battleReport = new JTextPane();
+
+                // Create a center-aligned style
+                SimpleAttributeSet center = new SimpleAttributeSet();
+                StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+                StyledDocument doc = battleReport.getStyledDocument();
+                doc.setParagraphAttributes(0, 0, center, false);
+
+                battleReport.setSize(400, 175);
+                battleReport.setText("\n" + attackStartingTerritory.name + " -> " + attackAttackingTerritory.name + "\n\nstarting troops: " + (attackStartingTerritory.troops + atkTroopsLost) + "\ntroops lost: " + atkTroopsLost + "\nremaining troops: " + attackStartingTerritory.troops);
+                battleReport.setFont(new Font("Helvetica", Font.PLAIN, 15));
+                battleReport.setOpaque(false);
+                battleReport.setEditable(false);
+                battleReport.setFocusable(false);
+
+                JButton confirmButton = new JButton("confirm");
+
+                dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+
+                confirmButton.addActionListener(e -> {
+                    if (!moveTroopsSelector.getSelectedItem().toString().equals("select number of troops to move")) {
+                        int moveTroops = Integer.parseInt(moveTroopsSelector.getSelectedItem().toString());
+
+                        attackStartingTerritory.parent.territories.add(attackAttackingTerritory);
+                        attackStartingTerritory.parent.updateLabels();
+
+                        attackAttackingTerritory.parent.territories.remove(attackAttackingTerritory);
+                        attackAttackingTerritory.parent.updateLabels();
+
+                        // check if captured territory parent is eliminated
+                            //
+
+
+                        attackStartingTerritory.opacity = 1.0F;
+                        attackAttackingTerritory.opacity = 1.0F;
+                        attackAttackingTerritory.parent = attackStartingTerritory.parent; // ********************** captured territory parent changes to attacking territory parent *************
+
+                        attackStartingTerritory.updateTroops(moveTroops * -1);
+                        attackAttackingTerritory.updateTroops(moveTroops);
+
+                        attackStartingTerritory = null;
+                        attackAttackingTerritory = null;
+
+                        selectedTerritories.setText(null);
+                        attackBtnContainer.setVisible(false);
+                        attackStatus.setText("select a territory");
+                        endAttackBtnContainer.setVisible(true);
+
+                        dialog.dispose();
+                    }
+                });
+
+                JPanel panel = new JPanel();
+                panel.add(moveTroopsSelector);
+                panel.add(confirmButton);
+
+                dialog.add(battleReport);
+                dialog.add(panel);
+
+                dialog.setVisible(true);
+
+                break;
+            }
+
+            // roll dice for atk territory
+            if (atkTroops > 3) {
+                for (int i = 0; i < 3; i++) {
+                    atkDice.add((int) ((Math.random() * 6)) + 1);
+                }
+
+            } else if (atkTroops == 3) {
+                for (int i = 0; i < 2; i++) {
+                    atkDice.add((int) ((Math.random() * 6)) + 1);
+                }
+
+            } else if (atkTroops == 2) {
+                for (int i = 0; i < 1; i++) {
+                    atkDice.add((int) ((Math.random() * 6)) + 1);
+                }
+
+            }
+
+            // roll dice for def territory
+            if (defTroops >= 2) {
+                for (int i = 0; i < 2; i++) {
+                    defDice.add((int) ((Math.random() * 6)) + 1);
+                }
+
+            } else if (defTroops == 1) {
+                for (int i = 0; i < 1; i++) {
+                    defDice.add((int) ((Math.random() * 6)) + 1);
+                }
+            }
+
+            // determine winner of round
+            if (Collections.max(atkDice) > Collections.max(defDice)) {
+                defTroops--;
+                defTroopsLost++;
+            } else {
+                atkTroops--;
+                atkTroopsLost++;
+            }
+        }
     }
 }
