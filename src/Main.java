@@ -536,6 +536,21 @@ public class Main extends JFrame {
             game.endTurnBtnContainer.setVisible(true);
         });
 
+        game.endTurnBtn.addActionListener(e -> {
+            game.phase = "draft";
+            game.turnCounter++;
+            game.updateRoundInfoPanel();
+
+            game.fortifyPhaseInfo.setVisible(false);
+
+            // update info panels for new player
+            game.refreshDraftPhaseInfoPanel();
+            game.refreshAttackPhaseInfoPanel();
+            game.refreshFortifyPhaseInfoPanel();
+
+            game.draftPhaseInfo.setVisible(true);
+        });
+
         // create gui
         setContentPane(contentPane);
         setDefaultCloseOperation(EXIT_ON_CLOSE);

@@ -100,7 +100,7 @@ public class Game {
         this.draftPhaseInfo.add(availableTroops);
 
         this.draftStatus = new JLabel("select a territory");
-        this.draftStatus.setBounds(270, 22, 150, 20);
+        this.draftStatus.setBounds(250, 22, 170, 20);
         this.draftStatus.setFont(new Font("Helvetica", Font.BOLD, 15));
         this.draftPhaseInfo.add(draftStatus);
 
@@ -176,7 +176,7 @@ public class Game {
         this.fortifyPhaseInfo.add(this.fortifyStatus);
 
         this.fortifySelectedTerritories = new JLabel();
-        this.fortifySelectedTerritories.setBounds(280, 22, 250, 20);
+        this.fortifySelectedTerritories.setBounds(262, 22, 250, 20);
         this.fortifySelectedTerritories.setFont(new Font("Helvetica", Font.BOLD, 15));
         this.fortifyPhaseInfo.add(this.fortifySelectedTerritories);
 
@@ -227,16 +227,36 @@ public class Game {
         return draftPhaseInfo;
     }
 
+    public void refreshDraftPhaseInfoPanel() {
+        draftPhaseInfo.setBackground(getTurn().colour);
+        availableTroops.setText("available troops: " + getTurn().undeployedTroops);
+
+        draftStatus.setText("select a territory");
+        nextPhaseBtnContainer.setVisible(false);
+
+        for (int i = 1; i <= getTurn().undeployedTroops; i++) {
+            addTroops.addItem(String.valueOf(i));
+        }
+    }
+
     public JPanel initializeAttackPhaseInfoPanel() {
         attackPhaseInfo.setBackground(getTurn().colour);
 
         return attackPhaseInfo;
     }
 
+    public void refreshAttackPhaseInfoPanel() {
+        attackPhaseInfo.setBackground(getTurn().colour);
+    }
+
     public JPanel initializeFortifyPhaseInfoPanel() {
         fortifyPhaseInfo.setBackground(getTurn().colour);
 
         return fortifyPhaseInfo;
+    }
+
+    public void refreshFortifyPhaseInfoPanel() {
+        fortifyPhaseInfo.setBackground(getTurn().colour);
     }
 
     public Player getTurn() {
