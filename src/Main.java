@@ -1,20 +1,17 @@
 import javax.swing.*;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 
 public class Main extends JFrame {
     // create game object
     Game game = new Game(1, new ArrayList<>() {}, "draft", true);
 
     // create player objects
-    Player player1 = new Player("player 1", Color.CYAN, new ArrayList<>() {}, 5, 3, true);
+    Player player1 = new Player("player 1", Color.CYAN, new ArrayList<>() {}, 5, 30, true);
     Player player2 = new Player("player 2", Color.MAGENTA, new ArrayList<>() {}, 4, 3, true);
 
     // create territory objects
@@ -23,9 +20,9 @@ public class Main extends JFrame {
     Territory nwt = new Territory("nwt", player1, Util.getPath2d("nwt"), 1, 1.0F, new ArrayList<>() {});
     Territory alberta = new Territory("alberta", player1, Util.getPath2d("alberta"), 1, 1.0F, new ArrayList<>() {});
     Territory alaska = new Territory("alaska", player1, Util.getPath2d("alaska"), 1, 1.0F, new ArrayList<>() {});
-    Territory ontario = new Territory("ontario", player1, Util.getPath2d("ontario"), 1, 1.0F, new ArrayList<>() {});
+    Territory ontario = new Territory("ontario", player2, Util.getPath2d("ontario"), 1, 1.0F, new ArrayList<>() {});
     Territory westernUS = new Territory("western u.s.", player2, Util.getPath2d("westernUS"), 1, 1.0F, new ArrayList<>() {});
-    Territory mexico = new Territory("mexico", player2, Util.getPath2d("mexico"), 1, 1.0F, new ArrayList<>() {});
+    Territory mexico = new Territory("mexico", player1, Util.getPath2d("mexico"), 1, 1.0F, new ArrayList<>() {});
     Territory easternUS = new Territory("eastern u.s.", player2, Util.getPath2d("easternUS"), 1, 1.0F, new ArrayList<>() {});
     Territory easternCanada = new Territory("eastern canada", player2, Util.getPath2d("easternCanada"), 1, 1.0F, new ArrayList<>() {});
     Territory greenland = new Territory("greenland", player1, Util.getPath2d("greenland"), 1, 1.0F, new ArrayList<>() {});
@@ -39,7 +36,7 @@ public class Main extends JFrame {
         // set adjacent territories for each territory
 
         // north america
-        Collections.addAll(nwt.adjacentTerritories, alaska, ontario, alberta);
+        Collections.addAll(nwt.adjacentTerritories, alaska, ontario, alberta, greenland);
         Collections.addAll(alberta.adjacentTerritories, alaska, ontario, nwt, westernUS);
         Collections.addAll(alaska.adjacentTerritories, alberta, nwt); // **add kamchatka once implemented**
         Collections.addAll(ontario.adjacentTerritories, alberta, nwt, easternCanada, easternUS, westernUS, greenland);
@@ -165,18 +162,11 @@ public class Main extends JFrame {
         // create draft phase info panel
         infoPanel.add(game.initializeDraftPhaseInfoPanel());
 
-
         // create attack phase info panel
         infoPanel.add(game.initializeAttackPhaseInfoPanel());
 
         // create fortify phase info panel
-        JPanel fortifyPhaseInfo = new JPanel(new FlowLayout(FlowLayout.LEADING, 100, 0));
-        fortifyPhaseInfo.setBackground(Color.CYAN);
-        fortifyPhaseInfo.setBounds(755, 0, 955, 100);
-        fortifyPhaseInfo.setBorder(new CompoundBorder(
-                BorderFactory.createMatteBorder(2, 2, 0, 0, Color.BLACK), // top line
-                new EmptyBorder(22, -85, 0, 0) // padding
-        ));
+        infoPanel.add(game.initializeFortifyPhaseInfoPanel());
 
         // add map & info panels to parent panel
         contentPane.add(mapPanel);
@@ -202,7 +192,10 @@ public class Main extends JFrame {
                         if (game.getTurn().undeployedTroops > 0) {
                             for (Territory territory : activePlayer.territories) {
                                 if (territory.path2d.contains(e.getPoint())) {
-                                    ownedTerritorySelected = true;
+                                    if (game.draftSelectedTerritory != null) { // = click is on owned territory when starting territory was already previously selected; selecting new owned territory to start from (territories are reset)
+                                        game.draftSelectedTerritory.opacity = 1.0F;
+                                    }
+
                                     territory.opacity = 0.3F;
                                     repaint();
 
@@ -212,16 +205,12 @@ public class Main extends JFrame {
                                     game.draftSelectedTerritory = territory;
 
                                 } else {
-                                    territory.opacity = 1.0F;
-                                    repaint();
+                                    if (territory != game.draftSelectedTerritory) {
+                                        territory.opacity = 1.0F;
+                                        repaint();
+                                    }
                                 }
                             }
-
-                            if (!ownedTerritorySelected) {
-                                game.draftStatus.setText("select a territory");
-                                game.addTroopsPanel.setVisible(false);
-                            }
-
                         }
 
                     } else if (game.phase.equals("attack")) {
@@ -229,27 +218,29 @@ public class Main extends JFrame {
                             if (territory.path2d.contains(e.getPoint())) { // check if click is on player owned territory
                                 ownedTerritorySelected = true;
 
-                                if (game.attackStartingTerritory != null) { // = click is on owned territory when starting territory was already previously selected; selecting new owned territory to start from (territories are reset)
-                                    game.attackStartingTerritory.opacity = 1.0F;
-                                    game.attackStartingTerritory = null;
-
-                                    if (game.attackAttackingTerritory != null) {
-                                        game.attackAttackingTerritory.opacity = 1.0F;
-                                        game.attackAttackingTerritory = null;
-
-                                        game.selectedTerritories.setText(null);
-                                        game.attackBtnContainer.setVisible(false);
-                                    }
-
-                                    game.attackStatus.setText("select a territory");
-                                    game.endAttackBtnContainer.setVisible(true);
-                                }
-
                                 boolean validSelection = false;
 
                                 for (Territory adjTerritory : territory.adjacentTerritories) { // check if clicked territory has at least 1 adjacent enemy territory that can be attacked
                                     if (adjTerritory.parent != territory.parent) {
                                         validSelection = true;
+                                    }
+                                }
+
+                                if (game.attackStartingTerritory != null) { // = click is on owned territory when starting territory was already previously selected; selecting new owned territory to start from (territories are reset)
+                                    if (validSelection && territory.troops >= 2) {
+                                        game.attackStartingTerritory.opacity = 1.0F;
+                                        game.attackStartingTerritory = null;
+
+                                        if (game.attackAttackingTerritory != null) {
+                                            game.attackAttackingTerritory.opacity = 1.0F;
+                                            game.attackAttackingTerritory = null;
+
+                                            game.attackSelectedTerritories.setText(null);
+                                            game.attackBtnContainer.setVisible(false);
+                                        }
+
+                                        game.attackStatus.setText("select a territory");
+                                        game.endAttackBtnContainer.setVisible(true);
                                     }
                                 }
 
@@ -274,36 +265,147 @@ public class Main extends JFrame {
 
                         if (!ownedTerritorySelected) {
                             if (game.attackStartingTerritory != null) { // only runs when starting territory is already selected to check if click is on an adjacent enemy territory
-                                boolean adjTerritoryChosen = false;
-
                                 for (Territory adjTerritory : game.attackStartingTerritory.adjacentTerritories) {
                                     if (adjTerritory.parent != game.attackStartingTerritory.parent) {
                                         if (adjTerritory.path2d.contains(e.getPoint())) {
-                                            adjTerritoryChosen = true;
+
+                                            if (game.attackAttackingTerritory != null) {
+                                                game.attackAttackingTerritory.opacity = 1.0F;
+                                            }
 
                                             game.attackAttackingTerritory = adjTerritory;
                                             game.attackStatus.setText(game.attackStartingTerritory.parent.name + " vs " + game.attackAttackingTerritory.parent.name);
-                                            game.selectedTerritories.setText(game.attackStartingTerritory.name + ": " + game.attackStartingTerritory.troops + "   |   " + game.attackAttackingTerritory.name + ": " + game.attackAttackingTerritory.troops);
+                                            game.attackSelectedTerritories.setText(game.attackStartingTerritory.name + ": " + game.attackStartingTerritory.troops + "   |   " + game.attackAttackingTerritory.name + ": " + game.attackAttackingTerritory.troops);
                                             game.attackBtnContainer.setVisible(true);
 
                                             adjTerritory.opacity = 0.3F;
                                             repaint();
-                                        } else {
-                                            adjTerritory.opacity = 1.0F;
-                                            repaint();
-                                        }
-                                    }
 
-                                    if (!adjTerritoryChosen) {
-                                        game.selectedTerritories.setText(null);
-                                        game.attackBtnContainer.setVisible(false);
-                                        game.attackStatus.setText("select a territory to attack");
+                                        } else {
+                                            if (adjTerritory != game.attackAttackingTerritory) {
+                                                adjTerritory.opacity = 1.0F;
+                                                repaint();
+                                            }
+                                        }
                                     }
                                 }
                             }
                         }
 
                     } else if (game.phase.equals("fortify")) {
+                        if (!game.fortifyStatus.getText().equals("fortify complete")) {
+                            for (Territory territory : activePlayer.territories) {
+                                if (territory.path2d.contains(e.getPoint())) {
+                                    boolean validSelection = false;
+
+                                    for (Territory adjTerritory : territory.adjacentTerritories) {
+                                        if (adjTerritory.parent == territory.parent) {
+                                            validSelection = true; // territory clicked has at least one adjacent territory owned by the same player
+                                        }
+                                    }
+
+                                    if (game.fortifyStartingTerritory != null && game.fortifyFortifyingTerritory != null) {
+                                        if (validSelection && territory.troops >= 2) {
+                                            game.fortifyStartingTerritory.opacity = 1.0F;
+                                            game.fortifyStartingTerritory = null;
+
+                                            game.fortifyFortifyingTerritory.opacity = 1.0F;
+                                            game.fortifyFortifyingTerritory = null;
+
+                                            game.fortifySelectedTerritories.setText(null);
+                                            game.moveTroopsPanel.setVisible(false);
+
+                                            game.fortifyStatus.setText("select a territory");
+                                            game.endTurnBtnContainer.setVisible(true);
+                                        }
+                                    }
+
+                                    if (game.fortifyStartingTerritory == null) {
+                                        if (validSelection && territory.troops >= 2) {
+                                            game.fortifyStartingTerritory = territory; // select owned territory to start from
+
+                                            territory.opacity = 0.3F;
+
+                                            repaint();
+
+                                            game.fortifyStatus.setText("select a territory to fortify");
+                                            game.endTurnBtnContainer.setVisible(false);
+                                        }
+
+                                    } else if (game.fortifyFortifyingTerritory == null && territory != game.fortifyStartingTerritory) {
+                                        boolean valid = false;
+                                        ArrayList<Territory> uncheckedAdjTerritories = new ArrayList<>(game.fortifyStartingTerritory.adjacentTerritories); // ************** arraylists are reference types; uncheckedAdjTerritories must be given a copy, otherwise changes made to it will also affect the original
+                                        ArrayList<Territory> stagingArea = new ArrayList<>();
+                                        ArrayList<Territory> checkedTerritories = new ArrayList<>();
+                                        HashSet<Territory> duplicateRemover = new HashSet<>();
+
+                                        searchAlgorithm:
+                                        while (true) {
+                                            stagingArea.clear();
+
+                                            for (int i = 0; i < uncheckedAdjTerritories.size(); i++) {
+                                                if (uncheckedAdjTerritories.get(i).parent.equals(game.fortifyStartingTerritory.parent)) {
+//                                                    uncheckedAdjTerritories.get(i).opacity = 0.3F;
+//                                                    stagingArea.add(uncheckedAdjTerritories.get(i));
+//                                                    checkedTerritories.add(uncheckedAdjTerritories.get(i));
+
+                                                    if (uncheckedAdjTerritories.get(i).equals(territory)) {
+                                                        valid = true;
+                                                        break searchAlgorithm;
+
+                                                    } else {
+                                                        stagingArea.add(uncheckedAdjTerritories.get(i));
+                                                        checkedTerritories.add(uncheckedAdjTerritories.get(i));
+                                                    }
+                                                }
+                                            }
+
+                                            if (!stagingArea.isEmpty()) {
+                                                uncheckedAdjTerritories.clear();
+                                                duplicateRemover.clear();
+
+                                                // find all adjacent territories of territories in staging area
+                                                for (int i = 0; i < stagingArea.size(); i++) {
+                                                    for (int j = 0; j < stagingArea.get(i).adjacentTerritories.size(); j++) {
+                                                        if (!checkedTerritories.contains(stagingArea.get(i).adjacentTerritories.get(j))) { // prevents infinite loop; territory that adjacent territories branch off from is not re-added
+                                                            duplicateRemover.add(stagingArea.get(i).adjacentTerritories.get(j));
+                                                        }
+                                                    }
+                                                }
+
+                                                uncheckedAdjTerritories.addAll(duplicateRemover);
+
+                                            } else {
+                                                // repaint();
+                                                break searchAlgorithm;
+                                            }
+                                        }
+
+                                        if (valid) {
+                                            game.moveTroops.removeAllItems();
+                                            game.fortifyFortifyingTerritory = territory;
+
+                                            game.fortifyStatus.setText("fortify in progress");
+                                            game.moveTroopsPanel.setVisible(true);
+                                            game.fortifySelectedTerritories.setText(game.fortifyStartingTerritory.name + " -> " + game.fortifyFortifyingTerritory.name);
+
+                                            for (int i = 1; i <= game.fortifyStartingTerritory.troops -1; i++) {
+                                                game.moveTroops.addItem(String.valueOf(i));
+                                            }
+
+                                            territory.opacity = 0.3F;
+                                            repaint();
+                                        }
+                                    }
+
+                                } else {
+                                    if (territory != game.fortifyStartingTerritory && territory != game.fortifyFortifyingTerritory) {
+                                        territory.opacity = 1.0F;
+                                        repaint();
+                                    }
+                                }
+                            }
+                        }
 
                     }
 
@@ -328,7 +430,7 @@ public class Main extends JFrame {
                                 game.attackAttackingTerritory.opacity = 1.0F;
                                 game.attackAttackingTerritory = null;
 
-                                game.selectedTerritories.setText(null);
+                                game.attackSelectedTerritories.setText(null);
                                 game.attackBtnContainer.setVisible(false);
                             }
 
@@ -336,6 +438,27 @@ public class Main extends JFrame {
                             game.endAttackBtnContainer.setVisible(true);
 
                             repaint();
+                        }
+
+                    } else if (game.phase.equals("fortify")) {
+                        if (!game.fortifyStatus.getText().equals("fortify complete")) {
+                            if (game.fortifyStartingTerritory != null) {
+                                game.fortifyStartingTerritory.opacity = 1.0F;
+                                game.fortifyStartingTerritory = null;
+
+                                if (game.fortifyFortifyingTerritory != null) {
+                                    game.fortifyFortifyingTerritory.opacity = 1.0F;
+                                    game.fortifyFortifyingTerritory = null;
+
+                                    game.fortifySelectedTerritories.setText(null);
+                                    game.moveTroopsPanel.setVisible(false);
+                                }
+
+                                game.fortifyStatus.setText("select a territory");
+                                game.endTurnBtnContainer.setVisible(true);
+
+                                repaint();
+                            }
                         }
                     }
                 }
@@ -364,6 +487,8 @@ public class Main extends JFrame {
             }
 
             game.draftSelectedTerritory.opacity = 1.0F;
+            game.draftSelectedTerritory = null;
+
             game.addTroopsPanel.setVisible(false);
             repaint();
         });
@@ -372,6 +497,7 @@ public class Main extends JFrame {
             game.phase = "attack";
             game.updateRoundInfoPanel();
             game.draftPhaseInfo.setVisible(false);
+
             game.attackPhaseInfo.setVisible(true);
         });
 
@@ -385,6 +511,29 @@ public class Main extends JFrame {
             game.phase = "fortify";
             game.updateRoundInfoPanel();
             game.attackPhaseInfo.setVisible(false);
+
+            game.fortifyPhaseInfo.setVisible(true);
+            game.fortifyStatus.setText("select a territory");
+        });
+
+        // fortify phase btns
+        game.moveTroopsBtn.addActionListener(e -> {
+            game.fortifyStartingTerritory.updateTroops(Integer.parseInt(game.moveTroops.getSelectedItem().toString()) * -1);
+            game.fortifyFortifyingTerritory.updateTroops(Integer.parseInt(game.moveTroops.getSelectedItem().toString()));
+
+            game.fortifyStartingTerritory.opacity = 1.0F;
+            game.fortifyStartingTerritory = null;
+
+            game.fortifyFortifyingTerritory.opacity = 1.0F;
+            game.fortifyFortifyingTerritory = null;
+
+            repaint();
+
+            game.fortifyStatus.setText("fortify complete");
+            game.fortifySelectedTerritories.setText(null);
+            game.moveTroops.removeAllItems();
+            game.moveTroopsPanel.setVisible(false);
+            game.endTurnBtnContainer.setVisible(true);
         });
 
         // create gui
@@ -392,7 +541,7 @@ public class Main extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1920, 1080);
         setLocationRelativeTo(null);
-        setResizable(true);
+        setResizable(false);
         setVisible(true);
     }
 

@@ -17,6 +17,8 @@ public class Game {
     Territory draftSelectedTerritory;
     Territory attackStartingTerritory;
     Territory attackAttackingTerritory;
+    Territory fortifyStartingTerritory;
+    Territory fortifyFortifyingTerritory;
 
     Territory atkWinner;
     int atkTroopsLost;
@@ -36,11 +38,20 @@ public class Game {
 
     JPanel attackPhaseInfo;
     JLabel attackStatus;
-    JLabel selectedTerritories;
+    JLabel attackSelectedTerritories;
     JButton attackBtn;
     JPanel attackBtnContainer;
     JPanel endAttackBtnContainer;
     JButton endAttackBtn;
+
+    JPanel fortifyPhaseInfo;
+    JLabel fortifyStatus;
+    JLabel fortifySelectedTerritories;
+    JPanel moveTroopsPanel;
+    JComboBox<String> moveTroops;
+    JButton moveTroopsBtn;
+    JPanel endTurnBtnContainer;
+    JButton endTurnBtn;
 
     public Game(int turnCounter, ArrayList<Player> players, String phase, boolean live) {
         this.turnCounter = turnCounter;
@@ -50,6 +61,8 @@ public class Game {
         this.draftSelectedTerritory = null;
         this.attackStartingTerritory = null;
         this.attackAttackingTerritory = null;
+        this.fortifyStartingTerritory = null;
+        this.fortifyFortifyingTerritory = null;
         this.atkWinner = null;
         this.atkTroopsLost = 0;
         this.defTroopsLost = 0;
@@ -74,8 +87,8 @@ public class Game {
 
         // create draft phase info panel
         this.draftPhaseInfo = new JPanel(null);
-        draftPhaseInfo.setVisible(true);
         this.draftPhaseInfo.setBounds(755, 0, 955, 100);
+        draftPhaseInfo.setVisible(true);
         this.draftPhaseInfo.setBorder(new CompoundBorder(
                 BorderFactory.createMatteBorder(2, 2, 0, 0, Color.BLACK), // top line
                 new EmptyBorder(0, -47, 0, 0) // padding
@@ -121,19 +134,15 @@ public class Game {
                 new EmptyBorder(22, -85, 0, 0) // padding
         ));
 
-        /*
-        1. select a territory -> select a territory to attack | next phase
-        2. territory 1 vs territory 2 | attack btn
-        */
         this.attackStatus = new JLabel("select a territory");
         this.attackStatus.setBounds(30, 22, 200, 20);
         this.attackStatus.setFont(new Font("Helvetica", Font.BOLD, 15));
         this.attackPhaseInfo.add(this.attackStatus);
 
-        this.selectedTerritories = new JLabel();
-        this.selectedTerritories.setBounds(250, 22, 250, 20);
-        this.selectedTerritories.setFont(new Font("Helvetica", Font.BOLD, 15));
-        this.attackPhaseInfo.add(this.selectedTerritories);
+        this.attackSelectedTerritories = new JLabel();
+        this.attackSelectedTerritories.setBounds(250, 22, 270, 20);
+        this.attackSelectedTerritories.setFont(new Font("Helvetica", Font.BOLD, 15));
+        this.attackPhaseInfo.add(this.attackSelectedTerritories);
 
         this.attackBtnContainer = new JPanel();
         this.attackBtnContainer.setOpaque(false);
@@ -151,6 +160,45 @@ public class Game {
 
         this.endAttackBtn = new JButton("end attack");
         this.endAttackBtnContainer.add(endAttackBtn);
+
+        // create fortify phase info panel
+        this.fortifyPhaseInfo = new JPanel(null);
+        this.fortifyPhaseInfo.setBounds(755, 0, 955, 100);
+        this.fortifyPhaseInfo.setVisible(false);
+        this.fortifyPhaseInfo.setBorder(new CompoundBorder(
+                BorderFactory.createMatteBorder(2, 2, 0, 0, Color.BLACK), // top line
+                new EmptyBorder(22, -85, 0, 0) // padding
+        ));
+
+        this.fortifyStatus = new JLabel("select a territory");
+        this.fortifyStatus.setBounds(30, 22, 200, 20);
+        this.fortifyStatus.setFont(new Font("Helvetica", Font.BOLD, 15));
+        this.fortifyPhaseInfo.add(this.fortifyStatus);
+
+        this.fortifySelectedTerritories = new JLabel();
+        this.fortifySelectedTerritories.setBounds(280, 22, 250, 20);
+        this.fortifySelectedTerritories.setFont(new Font("Helvetica", Font.BOLD, 15));
+        this.fortifyPhaseInfo.add(this.fortifySelectedTerritories);
+
+        this.moveTroopsPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
+        this.moveTroopsPanel.setOpaque(false);
+        this.moveTroopsPanel.setBounds(550, 17, 200, 100);
+        this.moveTroopsPanel.setVisible(false);
+        this.fortifyPhaseInfo.add(moveTroopsPanel);
+
+        this.moveTroops = new JComboBox<>();
+        this.moveTroopsPanel.add(moveTroops);
+
+        this.moveTroopsBtn = new JButton("move troops");
+        this.moveTroopsPanel.add(moveTroopsBtn);
+
+        this.endTurnBtnContainer = new JPanel();
+        this.endTurnBtnContainer.setOpaque(false);
+        this.endTurnBtnContainer.setBounds(770, 12, 200, 100);
+        this.fortifyPhaseInfo.add(endTurnBtnContainer);
+
+        this.endTurnBtn = new JButton("end turn");
+        this.endTurnBtnContainer.add(endTurnBtn);
 
     }
 
@@ -183,6 +231,12 @@ public class Game {
         attackPhaseInfo.setBackground(getTurn().colour);
 
         return attackPhaseInfo;
+    }
+
+    public JPanel initializeFortifyPhaseInfoPanel() {
+        fortifyPhaseInfo.setBackground(getTurn().colour);
+
+        return fortifyPhaseInfo;
     }
 
     public Player getTurn() {
@@ -266,7 +320,7 @@ public class Game {
                     attackStartingTerritory = null;
                     attackAttackingTerritory = null;
 
-                    selectedTerritories.setText(null);
+                    attackSelectedTerritories.setText(null);
                     attackBtnContainer.setVisible(false);
                     attackStatus.setText("select a territory");
                     endAttackBtnContainer.setVisible(true);
@@ -350,7 +404,7 @@ public class Game {
                         attackStartingTerritory = null;
                         attackAttackingTerritory = null;
 
-                        selectedTerritories.setText(null);
+                        attackSelectedTerritories.setText(null);
                         attackBtnContainer.setVisible(false);
                         attackStatus.setText("select a territory");
                         endAttackBtnContainer.setVisible(true);
