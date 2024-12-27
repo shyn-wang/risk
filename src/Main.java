@@ -240,11 +240,6 @@ public class Main extends JFrame {
 
                                     game.draftSelectedTerritory = territory;
 
-                                } else {
-                                    if (territory != game.draftSelectedTerritory) { // ensures click indicator is removed on any territories that are not clicked on; preserves click indicator on a territory if a non-owned territory is clicked on afterwards
-                                        territory.opacity = 1.0F;
-                                        repaint();
-                                    }
                                 }
                             }
                         }
@@ -291,11 +286,6 @@ public class Main extends JFrame {
                                     game.endAttackBtnContainer.setVisible(false);
                                 }
 
-                            } else {
-                                if (territory != game.attackStartingTerritory) { // do not reset opacity of starting territory if previously selected; for loop will always run to check if the click was on an owned territory
-                                    territory.opacity = 1.0F;
-                                    repaint();
-                                }
                             }
                         }
 
@@ -540,41 +530,7 @@ public class Main extends JFrame {
         game.attackBtn.addActionListener(e -> {
             game.simulateBattle();
             repaint();
-
-            // check if only one player is in game = current player wins
-            if (game.players.stream().filter(player -> player.inGame).count() == 1) {
-                System.out.println(game.getTurn().name);
-
-                JFrame frame = new JFrame();
-
-                JDialog dialog = new JDialog(frame, "game over", true); // modal = no other parts of the application can be accessed until the popup is responded to
-                dialog.setResizable(false);
-                dialog.setSize(300, 140);
-                dialog.setLocationRelativeTo(frame);
-
-
-                dialog.setLayout(new GridLayout(1, 1, 0, 15));
-
-                JTextPane gameReport = new JTextPane();
-
-                SimpleAttributeSet center = new SimpleAttributeSet();
-                StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
-                StyledDocument doc = gameReport.getStyledDocument();
-                doc.setParagraphAttributes(0, 0, center, false);
-
-                gameReport.setSize(400, 175);
-                gameReport.setText("\n" + game.getTurn().name + " wins " + "\n\ntotal territories: " + game.getTurn().getTotalTerritories() + "\ntotal troops: " + game.getTurn().getTotalTroops());
-                gameReport.setFont(new Font("Helvetica", Font.PLAIN, 15));
-                gameReport.setOpaque(false);
-                gameReport.setEditable(false);
-                gameReport.setFocusable(false);
-
-                dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-
-                dialog.add(gameReport);
-
-                dialog.setVisible(true);
-            }
+            game.checkForWinner();
         });
 
         game.endAttackBtn.addActionListener(e -> {

@@ -566,4 +566,40 @@ public class Game {
             }
         }
     }
+
+    public void checkForWinner() {
+        // check if only one player is in game = current player wins
+        if (players.stream().filter(player -> player.inGame).count() == 1) {
+
+            JFrame frame = new JFrame();
+
+            JDialog dialog = new JDialog(frame, "game over", true); // modal = no other parts of the application can be accessed until the popup is responded to
+            dialog.setResizable(false);
+            dialog.setSize(300, 140);
+            dialog.setLocationRelativeTo(frame);
+
+
+            dialog.setLayout(new GridLayout(1, 1, 0, 15));
+
+            JTextPane gameReport = new JTextPane();
+
+            SimpleAttributeSet center = new SimpleAttributeSet();
+            StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+            StyledDocument doc = gameReport.getStyledDocument();
+            doc.setParagraphAttributes(0, 0, center, false);
+
+            gameReport.setSize(400, 175);
+            gameReport.setText("\n" + getTurn().name + " wins " + "\n\ntotal territories: " + getTurn().getTotalTerritories() + "\ntotal troops: " + getTurn().getTotalTroops());
+            gameReport.setFont(new Font("Helvetica", Font.PLAIN, 15));
+            gameReport.setOpaque(false);
+            gameReport.setEditable(false);
+            gameReport.setFocusable(false);
+
+            dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+
+            dialog.add(gameReport);
+
+            dialog.setVisible(true);
+        }
+    }
 }
