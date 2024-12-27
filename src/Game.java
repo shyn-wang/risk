@@ -13,6 +13,7 @@ public class Game {
     ArrayList<Player> players;
     String phase;
     boolean live;
+    int round;
 
     Territory draftSelectedTerritory;
     Territory attackStartingTerritory;
@@ -53,8 +54,8 @@ public class Game {
     JPanel endTurnBtnContainer;
     JButton endTurnBtn;
 
-    public Game(int turnCounter, ArrayList<Player> players, String phase, boolean live) {
-        this.turnCounter = turnCounter;
+    public Game(ArrayList<Player> players, String phase, boolean live) {
+        this.turnCounter = 1;
         this.players = players;
         this.phase = phase;
         this.live = live;
@@ -66,6 +67,7 @@ public class Game {
         this.atkWinner = null;
         this.atkTroopsLost = 0;
         this.defTroopsLost = 0;
+        this.round = 1;
 
         // create round info panel
         this.roundInfo = new JPanel(null);
@@ -229,10 +231,90 @@ public class Game {
 
     public void refreshDraftPhaseInfoPanel() {
         draftPhaseInfo.setBackground(getTurn().colour);
-        availableTroops.setText("available troops: " + getTurn().undeployedTroops);
 
         draftStatus.setText("select a territory");
         nextPhaseBtnContainer.setVisible(false);
+
+        // create added troops popup
+        if (round > 1) {
+            int baseTroopsGained = (getTurn().getTotalTerritories() / 3);
+
+            if (baseTroopsGained < 3) { // minimum 3 troops will always be rewarded
+                baseTroopsGained = 3;
+            }
+
+            int continentBonuses = 0;
+
+            // check if all territories in each continent are owned by the player
+            if (Main.northAmerica.stream().allMatch(territory -> territory.parent == getTurn())) {
+                continentBonuses += 5; // 5 troops for north america
+            }
+
+//            if (Main.southAmerica.stream().allMatch(territory -> territory.parent == getTurn())) {
+//                continentBonuses += 2; // 2 troops for south america
+//            }
+//
+//            if (Main.europe.stream().allMatch(territory -> territory.parent == getTurn())) {
+//                continentBonuses += 5; // 5 troops for europe
+//            }
+//
+//            if (Main.africa.stream().allMatch(territory -> territory.parent == getTurn())) {
+//                continentBonuses += 3; // 3 troops for africa
+//            }
+//
+//            if (Main.asia.stream().allMatch(territory -> territory.parent == getTurn())) {
+//                continentBonuses += 7; // 7 troops for asia
+//            }
+//
+//            if (Main.oceania.stream().allMatch(territory -> territory.parent == getTurn())) {
+//                continentBonuses += 2; // 2 troops for oceania
+//            }
+
+            int totalTroopsGained = baseTroopsGained + continentBonuses;
+
+            JFrame frame = new JFrame();
+
+            JDialog dialog = new JDialog(frame, "troops gained", true); // modal = no other parts of the application can be accessed until the popup is responded to
+            dialog.setResizable(false);
+            dialog.setSize(300, 250);
+            dialog.setLocationRelativeTo(frame);
+
+
+            dialog.setLayout(new GridLayout(2, 1, 0, 15));
+
+            JTextPane playerReport = new JTextPane();
+
+            SimpleAttributeSet center = new SimpleAttributeSet();
+            StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+            StyledDocument doc = playerReport.getStyledDocument();
+            doc.setParagraphAttributes(0, 0, center, false);
+
+            playerReport.setSize(400, 175);
+            playerReport.setText("\n" + getTurn().name + " report\n\n" + getTurn().getTotalTerritories() + " territories occupied: " + baseTroopsGained + " troops\ncontinent bonuses: " + continentBonuses + " troops\ntotal troops gained: " + totalTroopsGained + " troops");
+            playerReport.setFont(new Font("Helvetica", Font.PLAIN, 15));
+            playerReport.setOpaque(false);
+            playerReport.setEditable(false);
+            playerReport.setFocusable(false);
+
+            JButton confirmButton = new JButton("confirm");
+
+            dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+
+            confirmButton.addActionListener(e -> {
+                getTurn().undeployedTroops += totalTroopsGained;
+                dialog.dispose();
+            });
+
+            JPanel panel = new JPanel();
+            panel.add(confirmButton);
+
+            dialog.add(playerReport);
+            dialog.add(panel);
+
+            dialog.setVisible(true);
+        }
+
+        availableTroops.setText("available troops: " + getTurn().undeployedTroops);
 
         for (int i = 1; i <= getTurn().undeployedTroops; i++) {
             addTroops.addItem(String.valueOf(i));
@@ -260,26 +342,24 @@ public class Game {
     }
 
     public Player getTurn() {
-        if (turnCounter == 1) {
-            if (players.get(0).inGame) {
-                return players.get(0);
-
+        while (true) {
+            if (turnCounter == 1) {
+                if (players.get(0).inGame) {
+                    return players.get(0);
+                } else {
+                    turnCounter++;
+                }
+            } else if (turnCounter == 2) {
+                if (players.get(1).inGame) {
+                    return players.get(1);
+                } else {
+                    turnCounter++;
+                }
             } else {
-                turnCounter++;
-                getTurn();
-            }
-
-        } else if (turnCounter == 2) {
-            if (players.get(1).inGame) {
-                return players.get(1);
-
-            } else {
-                turnCounter++;
-                getTurn();
+                turnCounter = 1;
+                round++;
             }
         }
-
-        return null;
     }
 
     public void simulateBattle() {
@@ -303,10 +383,10 @@ public class Game {
                 attackStartingTerritory.updateTroops(atkTroopsLost * -1);
                 attackAttackingTerritory.updateTroops(defTroopsLost * -1);
 
+                // create battle report popup gui
                 JFrame frame = new JFrame();
 
-                // Create a custom JDialog
-                JDialog dialog = new JDialog(frame, "attack failed", true);  // true makes it modal
+                JDialog dialog = new JDialog(frame, "attack failed", true); // modal = no other parts of the application can be accessed until the popup is responded to
                 dialog.setResizable(false);
                 dialog.setSize(300, 250);
                 dialog.setLocationRelativeTo(frame);
@@ -316,7 +396,6 @@ public class Game {
 
                 JTextPane battleReport = new JTextPane();
 
-                // Create a center-aligned style
                 SimpleAttributeSet center = new SimpleAttributeSet();
                 StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
                 StyledDocument doc = battleReport.getStyledDocument();
@@ -363,6 +442,7 @@ public class Game {
                 attackStartingTerritory.updateTroops(atkTroopsLost * -1);
                 attackAttackingTerritory.updateTroops(defTroopsLost * -1);
 
+                // create battle report popup gui
                 JFrame frame = new JFrame();
 
                 JComboBox<String> moveTroopsSelector = new JComboBox<>();
@@ -372,8 +452,7 @@ public class Game {
                     moveTroopsSelector.addItem(String.valueOf(i));
                 }
 
-                // Create a custom JDialog
-                JDialog dialog = new JDialog(frame, "attack successful", true);  // true makes it modal
+                JDialog dialog = new JDialog(frame, "attack successful", true); // modal = no other parts of the application can be accessed until the popup is responded to
                 dialog.setResizable(false);
                 dialog.setSize(300, 250);
                 dialog.setLocationRelativeTo(frame);
@@ -383,7 +462,6 @@ public class Game {
 
                 JTextPane battleReport = new JTextPane();
 
-                // Create a center-aligned style
                 SimpleAttributeSet center = new SimpleAttributeSet();
                 StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
                 StyledDocument doc = battleReport.getStyledDocument();
@@ -411,8 +489,11 @@ public class Game {
                         attackAttackingTerritory.parent.updateLabels();
 
                         // check if captured territory parent is eliminated
-                            //
-
+                        if (attackAttackingTerritory.parent.territories.isEmpty()) {
+                            attackAttackingTerritory.parent.inGame = false;
+                            attackAttackingTerritory.parent.deployedtroopCounterLabel.setText("eliminated");
+                            attackAttackingTerritory.parent.territoryCounterLabel.setText("");
+                        }
 
                         attackStartingTerritory.opacity = 1.0F;
                         attackAttackingTerritory.opacity = 1.0F;
@@ -445,7 +526,7 @@ public class Game {
                 break;
             }
 
-            // roll dice for atk territory
+            // roll dice for atk territory; max 3 dice rolled if troops > 3
             if (atkTroops > 3) {
                 for (int i = 0; i < 3; i++) {
                     atkDice.add((int) ((Math.random() * 6)) + 1);
@@ -463,7 +544,7 @@ public class Game {
 
             }
 
-            // roll dice for def territory
+            // roll dice for def territory; max 2 dice rolled
             if (defTroops >= 2) {
                 for (int i = 0; i < 2; i++) {
                     defDice.add((int) ((Math.random() * 6)) + 1);
@@ -476,7 +557,7 @@ public class Game {
             }
 
             // determine winner of round
-            if (Collections.max(atkDice) > Collections.max(defDice)) {
+            if (Collections.max(atkDice) > Collections.max(defDice)) { // highest dice roll on atk side is compared to highest dice roll on def side; winner = highest roll, dice are continuously rerolled and compared until either side loses all troops
                 defTroops--;
                 defTroopsLost++;
             } else {

@@ -1,4 +1,7 @@
 import javax.swing.*;
+import javax.swing.text.SimpleAttributeSet;
+import javax.swing.text.StyleConstants;
+import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -8,7 +11,7 @@ import java.util.HashSet;
 
 public class Main extends JFrame {
     // create game object
-    Game game = new Game(1, new ArrayList<>() {}, "draft", true);
+    Game game = new Game(new ArrayList<>() {}, "draft", true);
 
     // create player objects
     Player player1 = new Player("player 1", Color.CYAN, new ArrayList<>() {}, 5, 30, true);
@@ -17,17 +20,29 @@ public class Main extends JFrame {
     // create territory objects
 
     // north america
-    Territory nwt = new Territory("nwt", player1, Util.getPath2d("nwt"), 1, 1.0F, new ArrayList<>() {});
-    Territory alberta = new Territory("alberta", player1, Util.getPath2d("alberta"), 1, 1.0F, new ArrayList<>() {});
-    Territory alaska = new Territory("alaska", player1, Util.getPath2d("alaska"), 1, 1.0F, new ArrayList<>() {});
-    Territory ontario = new Territory("ontario", player2, Util.getPath2d("ontario"), 1, 1.0F, new ArrayList<>() {});
-    Territory westernUS = new Territory("western u.s.", player2, Util.getPath2d("westernUS"), 1, 1.0F, new ArrayList<>() {});
-    Territory mexico = new Territory("mexico", player1, Util.getPath2d("mexico"), 1, 1.0F, new ArrayList<>() {});
-    Territory easternUS = new Territory("eastern u.s.", player2, Util.getPath2d("easternUS"), 1, 1.0F, new ArrayList<>() {});
-    Territory easternCanada = new Territory("eastern canada", player2, Util.getPath2d("easternCanada"), 1, 1.0F, new ArrayList<>() {});
-    Territory greenland = new Territory("greenland", player1, Util.getPath2d("greenland"), 1, 1.0F, new ArrayList<>() {});
+    Territory nwt = new Territory("nwt", player1, Util.getPath2d("nwt"), 1, 1.0F, new ArrayList<>() {}, "north america");
+    Territory alberta = new Territory("alberta", player1, Util.getPath2d("alberta"), 1, 1.0F, new ArrayList<>() {}, "north america");
+    Territory alaska = new Territory("alaska", player1, Util.getPath2d("alaska"), 1, 1.0F, new ArrayList<>() {}, "north america");
+    Territory ontario = new Territory("ontario", player2, Util.getPath2d("ontario"), 1, 1.0F, new ArrayList<>() {}, "north america");
+    Territory westernUS = new Territory("western u.s.", player2, Util.getPath2d("westernUS"), 1, 1.0F, new ArrayList<>() {}, "north america");
+    Territory mexico = new Territory("mexico", player1, Util.getPath2d("mexico"), 1, 1.0F, new ArrayList<>() {}, "north america");
+    Territory easternUS = new Territory("eastern u.s.", player2, Util.getPath2d("easternUS"), 1, 1.0F, new ArrayList<>() {}, "north america");
+    Territory easternCanada = new Territory("eastern canada", player2, Util.getPath2d("easternCanada"), 1, 1.0F, new ArrayList<>() {}, "north america");
+    Territory greenland = new Territory("greenland", player1, Util.getPath2d("greenland"), 1, 1.0F, new ArrayList<>() {}, "north america");
+
+    // stores all territories
+    ArrayList<Territory> allTerritories = new ArrayList<>();
+
+    // create continent arraylists
+    static ArrayList<Territory> northAmerica = new ArrayList<>();
+    static ArrayList<Territory> southAmerica = new ArrayList<>();
+    static ArrayList<Territory> europe = new ArrayList<>();
+    static ArrayList<Territory> africa = new ArrayList<>();
+    static ArrayList<Territory> asia = new ArrayList<>();
+    static ArrayList<Territory> oceania = new ArrayList<>();
 
     public Main() throws Exception {
+        // create main panel
         JPanel contentPane = new JPanel(null);
 
         // add players to game
@@ -45,9 +60,6 @@ public class Main extends JFrame {
         Collections.addAll(easternUS.adjacentTerritories, easternCanada, ontario, westernUS, mexico);
         Collections.addAll(easternCanada.adjacentTerritories, ontario, easternUS, greenland);
         Collections.addAll(greenland.adjacentTerritories, ontario, easternCanada, nwt); //
-
-        // stores all territories
-        ArrayList<Territory> allTerritories = new ArrayList<>();
 
         // add territories to allTerritories arraylist
         allTerritories.add(nwt);
@@ -69,18 +81,41 @@ public class Main extends JFrame {
             }
         }
 
+        // add territories belonging to each continent to their respective arraylist
+        for (Territory territory : allTerritories) {
+            switch (territory.continent) {
+                case "north america":
+                    northAmerica.add(territory);
+                    break;
+                case "south america":
+                    southAmerica.add(territory);
+                    break;
+                case "europe":
+                    europe.add(territory);
+                    break;
+                case "africa":
+                    africa.add(territory);
+                    break;
+                case "asia":
+                    asia.add(territory);
+                    break;
+                case "oceania":
+                    oceania.add(territory);
+                    break;
+            }
+        }
+
+        // create panel for world map
         JPanel mapPanel = new JPanel(null) {
-            // called whenever gui is created/refreshed
             @Override
-            protected void paintComponent(Graphics g) {
+            protected void paintComponent(Graphics g) { // called whenever gui is created/refreshed
                 super.paintComponent(g);
 
                 // render path2D shapes
                 try {
-                    // Cast Graphics to Graphics2D
                     Graphics2D g2d = (Graphics2D) g;
 
-                    // antialiasing = smooth edges
+                    // antialiasing on = smooth edges
                     g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
                     // create fillings
@@ -135,10 +170,6 @@ public class Main extends JFrame {
 
         mapPanel.setBounds(0, 0, 1920, 980);
 
-        JPanel infoPanel = new JPanel(null);
-        infoPanel.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, java.awt.Color.BLACK));
-        infoPanel.setBounds(0, 980, 1920, 100);
-
         // create troop count labels
 
         // north america
@@ -151,6 +182,11 @@ public class Main extends JFrame {
         westernUS.createLabel(mapPanel, 235, 250);
         easternUS.createLabel(mapPanel, 333, 265);
         mexico.createLabel(mapPanel, 255, 365);
+
+        // create game info panel
+        JPanel infoPanel = new JPanel(null);
+        infoPanel.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, java.awt.Color.BLACK));
+        infoPanel.setBounds(0, 980, 1920, 100);
 
         // create player stat panels
         infoPanel.add(player1.initializePanel(0, 0));
@@ -180,7 +216,7 @@ public class Main extends JFrame {
                 boolean ownedTerritorySelected = false;
 
                 for (Territory territory : allTerritories) {
-                    if (territory.path2d.contains(e.getPoint())) {
+                    if (territory.path2d.contains(e.getPoint())) { // check if click is on a territory
                         territoryClicked = true;
                     }
                 }
@@ -191,12 +227,12 @@ public class Main extends JFrame {
                     if (game.phase.equals("draft")) {
                         if (game.getTurn().undeployedTroops > 0) {
                             for (Territory territory : activePlayer.territories) {
-                                if (territory.path2d.contains(e.getPoint())) {
-                                    if (game.draftSelectedTerritory != null) { // = click is on owned territory when starting territory was already previously selected; selecting new owned territory to start from (territories are reset)
-                                        game.draftSelectedTerritory.opacity = 1.0F;
+                                if (territory.path2d.contains(e.getPoint())) { // checks if click is on a territory owned by the current turn's player
+                                    if (game.draftSelectedTerritory != null) { // checks if click is on owned territory when starting territory was already previously selected (when the player selects a different owned territory to start from); prevents bug where both territories have the click indicator if a territory stored at a later point in the arraylist containing the player's territories is selected after a territory that is stored at an earlier point
+                                        game.draftSelectedTerritory.opacity = 1.0F; // remove click indicator
                                     }
 
-                                    territory.opacity = 0.3F;
+                                    territory.opacity = 0.3F; // indicates click
                                     repaint();
 
                                     game.draftStatus.setText(territory.name + " selected");
@@ -205,7 +241,7 @@ public class Main extends JFrame {
                                     game.draftSelectedTerritory = territory;
 
                                 } else {
-                                    if (territory != game.draftSelectedTerritory) {
+                                    if (territory != game.draftSelectedTerritory) { // ensures click indicator is removed on any territories that are not clicked on; preserves click indicator on a territory if a non-owned territory is clicked on afterwards
                                         territory.opacity = 1.0F;
                                         repaint();
                                     }
@@ -226,7 +262,7 @@ public class Main extends JFrame {
                                     }
                                 }
 
-                                if (game.attackStartingTerritory != null) { // = click is on owned territory when starting territory was already previously selected; selecting new owned territory to start from (territories are reset)
+                                if (game.attackStartingTerritory != null) { // check if click is on different owned territory when starting territory was already previously selected; selecting new owned territory to start from (territories are reset)
                                     if (validSelection && territory.troops >= 2) {
                                         game.attackStartingTerritory.opacity = 1.0F;
                                         game.attackStartingTerritory = null;
@@ -266,10 +302,9 @@ public class Main extends JFrame {
                         if (!ownedTerritorySelected) {
                             if (game.attackStartingTerritory != null) { // only runs when starting territory is already selected to check if click is on an adjacent enemy territory
                                 for (Territory adjTerritory : game.attackStartingTerritory.adjacentTerritories) {
-                                    if (adjTerritory.parent != game.attackStartingTerritory.parent) {
+                                    if (adjTerritory.parent != game.attackStartingTerritory.parent) { // checks if territory selected is adjacent to the starting territory and owned by another player
                                         if (adjTerritory.path2d.contains(e.getPoint())) {
-
-                                            if (game.attackAttackingTerritory != null) {
+                                            if (game.attackAttackingTerritory != null) { // checks if a territory to attack was already previously chosen; resets its state (occurs when player selects a different territory to attack)
                                                 game.attackAttackingTerritory.opacity = 1.0F;
                                             }
 
@@ -282,7 +317,7 @@ public class Main extends JFrame {
                                             repaint();
 
                                         } else {
-                                            if (adjTerritory != game.attackAttackingTerritory) {
+                                            if (adjTerritory != game.attackAttackingTerritory) { // preserves click indicator on selected territory to attack if a non-valid territory is clicked on afterwards
                                                 adjTerritory.opacity = 1.0F;
                                                 repaint();
                                             }
@@ -293,8 +328,8 @@ public class Main extends JFrame {
                         }
 
                     } else if (game.phase.equals("fortify")) {
-                        if (!game.fortifyStatus.getText().equals("fortify complete")) {
-                            for (Territory territory : activePlayer.territories) {
+                        if (!game.fortifyStatus.getText().equals("fortify complete")) { // checks if fortification already occurred; only one move is allowed per turn
+                            for (Territory territory : activePlayer.territories) { // checks if click is on an owned territory
                                 if (territory.path2d.contains(e.getPoint())) {
                                     boolean validSelection = false;
 
@@ -304,6 +339,7 @@ public class Main extends JFrame {
                                         }
                                     }
 
+                                    // resets states if a different territory is selected while both the starting and fortifying territory were previously selected
                                     if (game.fortifyStartingTerritory != null && game.fortifyFortifyingTerritory != null) {
                                         if (validSelection && territory.troops >= 2) {
                                             game.fortifyStartingTerritory.opacity = 1.0F;
@@ -320,7 +356,7 @@ public class Main extends JFrame {
                                         }
                                     }
 
-                                    if (game.fortifyStartingTerritory == null) {
+                                    if (game.fortifyStartingTerritory == null) { // checks if starting territory is chosen (yes = second territory must be selected, no = starting territory must be selected)
                                         if (validSelection && territory.troops >= 2) {
                                             game.fortifyStartingTerritory = territory; // select owned territory to start from
 
@@ -332,24 +368,25 @@ public class Main extends JFrame {
                                             game.endTurnBtnContainer.setVisible(false);
                                         }
 
-                                    } else if (game.fortifyFortifyingTerritory == null && territory != game.fortifyStartingTerritory) {
+                                    } else if (game.fortifyFortifyingTerritory == null && territory != game.fortifyStartingTerritory) { // choose territory to fortify (cannot fortify the starting territory)
                                         boolean valid = false;
                                         ArrayList<Territory> uncheckedAdjTerritories = new ArrayList<>(game.fortifyStartingTerritory.adjacentTerritories); // ************** arraylists are reference types; uncheckedAdjTerritories must be given a copy, otherwise changes made to it will also affect the original
                                         ArrayList<Territory> stagingArea = new ArrayList<>();
                                         ArrayList<Territory> checkedTerritories = new ArrayList<>();
                                         HashSet<Territory> duplicateRemover = new HashSet<>();
 
-                                        searchAlgorithm:
+                                        searchAlgorithm: // algorithm determines if click is on a territory that is connected to the starting territory either directly or through other territories owned by the player; troops can only be moved to territories that have a path to the starting territory that is comprised of player owned territories
                                         while (true) {
                                             stagingArea.clear();
 
+                                            // loop through all adjacent territories (initially for the starting territory's adjacent territories, then for the adjacent territories of the adjacent territories, etc.)
                                             for (int i = 0; i < uncheckedAdjTerritories.size(); i++) {
-                                                if (uncheckedAdjTerritories.get(i).parent.equals(game.fortifyStartingTerritory.parent)) {
+                                                if (uncheckedAdjTerritories.get(i).parent.equals(game.fortifyStartingTerritory.parent)) { // checks for player owned territories
 //                                                    uncheckedAdjTerritories.get(i).opacity = 0.3F;
 //                                                    stagingArea.add(uncheckedAdjTerritories.get(i));
 //                                                    checkedTerritories.add(uncheckedAdjTerritories.get(i));
 
-                                                    if (uncheckedAdjTerritories.get(i).equals(territory)) {
+                                                    if (uncheckedAdjTerritories.get(i).equals(territory)) { // checks if territory is the territory the player clicked on
                                                         valid = true;
                                                         break searchAlgorithm;
 
@@ -360,14 +397,14 @@ public class Main extends JFrame {
                                                 }
                                             }
 
-                                            if (!stagingArea.isEmpty()) {
+                                            if (!stagingArea.isEmpty()) { // not empty = more possible paths to the clicked territory that are unchecked
                                                 uncheckedAdjTerritories.clear();
                                                 duplicateRemover.clear();
 
-                                                // find all adjacent territories of territories in staging area
+                                                // find all adjacent territories of territories in staging area and add to a hashset (does not allow duplicates to be added; territories may share the same adjacent territories)
                                                 for (int i = 0; i < stagingArea.size(); i++) {
                                                     for (int j = 0; j < stagingArea.get(i).adjacentTerritories.size(); j++) {
-                                                        if (!checkedTerritories.contains(stagingArea.get(i).adjacentTerritories.get(j))) { // prevents infinite loop; territory that adjacent territories branch off from is not re-added
+                                                        if (!checkedTerritories.contains(stagingArea.get(i).adjacentTerritories.get(j))) { // prevents infinite loop; territories that adjacent territories branch off from are not re-added
                                                             duplicateRemover.add(stagingArea.get(i).adjacentTerritories.get(j));
                                                         }
                                                     }
@@ -375,7 +412,7 @@ public class Main extends JFrame {
 
                                                 uncheckedAdjTerritories.addAll(duplicateRemover);
 
-                                            } else {
+                                            } else { // path to territory does not exist
                                                 // repaint();
                                                 break searchAlgorithm;
                                             }
@@ -397,12 +434,6 @@ public class Main extends JFrame {
                                             repaint();
                                         }
                                     }
-
-                                } else {
-                                    if (territory != game.fortifyStartingTerritory && territory != game.fortifyFortifyingTerritory) {
-                                        territory.opacity = 1.0F;
-                                        repaint();
-                                    }
                                 }
                             }
                         }
@@ -411,9 +442,11 @@ public class Main extends JFrame {
 
                 } else { // no territory clicked
                     if (game.phase.equals("draft")) {
+                        // unselect selected territories + reset indicators
                         if (game.getTurn().undeployedTroops > 0) {
-                            for (Territory territory : allTerritories) {
-                                territory.opacity = 1.0F;
+                            if (game.draftSelectedTerritory != null) {
+                                game.draftSelectedTerritory.opacity = 1.0F;
+                                game.draftSelectedTerritory = null;
                                 repaint();
                             }
 
@@ -422,6 +455,7 @@ public class Main extends JFrame {
                         }
 
                     } else if (game.phase.equals("attack")) {
+                        // unselect selected territories) + reset indicators
                         if (game.attackStartingTerritory != null) {
                             game.attackStartingTerritory.opacity = 1.0F;
                             game.attackStartingTerritory = null;
@@ -441,6 +475,7 @@ public class Main extends JFrame {
                         }
 
                     } else if (game.phase.equals("fortify")) {
+                        // unselect selected territories + reset indicators
                         if (!game.fortifyStatus.getText().equals("fortify complete")) {
                             if (game.fortifyStartingTerritory != null) {
                                 game.fortifyStartingTerritory.opacity = 1.0F;
@@ -505,6 +540,41 @@ public class Main extends JFrame {
         game.attackBtn.addActionListener(e -> {
             game.simulateBattle();
             repaint();
+
+            // check if only one player is in game = current player wins
+            if (game.players.stream().filter(player -> player.inGame).count() == 1) {
+                System.out.println(game.getTurn().name);
+
+                JFrame frame = new JFrame();
+
+                JDialog dialog = new JDialog(frame, "game over", true); // modal = no other parts of the application can be accessed until the popup is responded to
+                dialog.setResizable(false);
+                dialog.setSize(300, 140);
+                dialog.setLocationRelativeTo(frame);
+
+
+                dialog.setLayout(new GridLayout(1, 1, 0, 15));
+
+                JTextPane gameReport = new JTextPane();
+
+                SimpleAttributeSet center = new SimpleAttributeSet();
+                StyleConstants.setAlignment(center, StyleConstants.ALIGN_CENTER);
+                StyledDocument doc = gameReport.getStyledDocument();
+                doc.setParagraphAttributes(0, 0, center, false);
+
+                gameReport.setSize(400, 175);
+                gameReport.setText("\n" + game.getTurn().name + " wins " + "\n\ntotal territories: " + game.getTurn().getTotalTerritories() + "\ntotal troops: " + game.getTurn().getTotalTroops());
+                gameReport.setFont(new Font("Helvetica", Font.PLAIN, 15));
+                gameReport.setOpaque(false);
+                gameReport.setEditable(false);
+                gameReport.setFocusable(false);
+
+                dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+
+                dialog.add(gameReport);
+
+                dialog.setVisible(true);
+            }
         });
 
         game.endAttackBtn.addActionListener(e -> {
@@ -539,16 +609,16 @@ public class Main extends JFrame {
         game.endTurnBtn.addActionListener(e -> {
             game.phase = "draft";
             game.turnCounter++;
+
             game.updateRoundInfoPanel();
 
             game.fortifyPhaseInfo.setVisible(false);
+            game.draftPhaseInfo.setVisible(true);
 
             // update info panels for new player
             game.refreshDraftPhaseInfoPanel();
             game.refreshAttackPhaseInfoPanel();
             game.refreshFortifyPhaseInfoPanel();
-
-            game.draftPhaseInfo.setVisible(true);
         });
 
         // create gui
