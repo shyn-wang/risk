@@ -1,0 +1,39 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="WangRisk:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/WangRisk_jar</output-path>
+    <root id="archive" name="WangRisk.jar">
+      <element id="module-output" name="WangRisk" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-all-1.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-anim-1.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-awt-util-1.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-bridge-1.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-codec-1.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-constants-1.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-css-1.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-dom-1.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-ext-1.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-extension-1.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-gui-util-1.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-gvt-1.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-i18n-1.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-parser-1.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-script-1.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-svg-dom-1.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-svgbrowser-1.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-svggen-1.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-svgrasterizer-1.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-swing-1.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-test-1.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-test-svg-1.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-test-swing-1.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-transcoder-1.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-util-1.18-tests.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-util-1.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-xml-1.18.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/fop-transcoder-allinone-2.10.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/jackson-core-2.18.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/jackson-databind-2.18.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/jackson-annotations-2.18.2.jar" path-in-jar="/" />
+    </root>
+  </artifact>
+</component>
