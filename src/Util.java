@@ -21,19 +21,15 @@ public class Util {
         AWTPathProducer pathProducer = new AWTPathProducer();
         PathParser pathParser = new PathParser();
 
-        // Link the parser and producer
         pathParser.setPathHandler(pathProducer);
 
-        // Parse the path data
         pathParser.parse(path);
 
-        // Retrieve the ExtendedGeneralPath
         PathIterator pathIterator = pathProducer.getShape().getPathIterator(null);
 
-        // Create a Path2D.Double to store the path
         Path2D.Double path2D = new Path2D.Double();
 
-        // Copy the path data into the Path2D
+        // copy the path data into the path2d
         double[] cords = new double[6];
         while (!pathIterator.isDone()) {
             int segmentType = pathIterator.currentSegment(cords);

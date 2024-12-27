@@ -239,7 +239,6 @@ public class Main extends JFrame {
                                     game.addTroopsPanel.setVisible(true);
 
                                     game.draftSelectedTerritory = territory;
-
                                 }
                             }
                         }
@@ -285,7 +284,6 @@ public class Main extends JFrame {
                                     game.attackStatus.setText("select a territory to attack");
                                     game.endAttackBtnContainer.setVisible(false);
                                 }
-
                             }
                         }
 
@@ -305,12 +303,6 @@ public class Main extends JFrame {
 
                                             adjTerritory.opacity = 0.3F;
                                             repaint();
-
-                                        } else {
-                                            if (adjTerritory != game.attackAttackingTerritory) { // preserves click indicator on selected territory to attack if a non-valid territory is clicked on afterwards
-                                                adjTerritory.opacity = 1.0F;
-                                                repaint();
-                                            }
                                         }
                                     }
                                 }
