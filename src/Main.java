@@ -14,8 +14,8 @@ public class Main extends JFrame {
     Game game = new Game(new ArrayList<>() {}, "draft", true);
 
     // create player objects
-    Player player1 = new Player("player 1", Color.CYAN, new ArrayList<>() {}, 0, 30, true);
-    Player player2 = new Player("player 2", Color.MAGENTA, new ArrayList<>() {}, 0, 30, true);
+    Player player1 = new Player("player 1", Color.CYAN, new ArrayList<>() {}, 0, 15, true);
+    Player player2 = new Player("player 2", Color.MAGENTA, new ArrayList<>() {}, 0, 15, true);
 
     // create territory objects
 
@@ -112,8 +112,19 @@ public class Main extends JFrame {
             }
         }
 
-        // semi-randomly deploy troops to each player's territories
+        // deploy troops to each player's territories
+        for (Player player : game.players) {
+            while (player.undeployedTroops > 3) {
+                for (Territory territory : player.territories) {
+                    int roll = (int) (Math.random() * 5) + 1;
 
+                    if (roll == 5) {
+                        territory.updateTroops(1);
+                        player.undeployedTroops--;
+                    }
+                }
+            }
+        }
 
         // add territories belonging to each continent to their respective arraylist
         for (Territory territory : allTerritories) {
