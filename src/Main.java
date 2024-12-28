@@ -14,21 +14,21 @@ public class Main extends JFrame {
     Game game = new Game(new ArrayList<>() {}, "draft", true);
 
     // create player objects
-    Player player1 = new Player("player 1", Color.CYAN, new ArrayList<>() {}, 5, 30, true);
-    Player player2 = new Player("player 2", Color.MAGENTA, new ArrayList<>() {}, 4, 3, true);
+    Player player1 = new Player("player 1", Color.CYAN, new ArrayList<>() {}, 0, 30, true);
+    Player player2 = new Player("player 2", Color.MAGENTA, new ArrayList<>() {}, 0, 30, true);
 
     // create territory objects
 
     // north america
-    Territory nwt = new Territory("nwt", player1, Util.getPath2d("nwt"), 1, 1.0F, new ArrayList<>() {}, "north america");
-    Territory alberta = new Territory("alberta", player1, Util.getPath2d("alberta"), 1, 1.0F, new ArrayList<>() {}, "north america");
-    Territory alaska = new Territory("alaska", player1, Util.getPath2d("alaska"), 1, 1.0F, new ArrayList<>() {}, "north america");
-    Territory ontario = new Territory("ontario", player2, Util.getPath2d("ontario"), 1, 1.0F, new ArrayList<>() {}, "north america");
-    Territory westernUS = new Territory("western u.s.", player2, Util.getPath2d("westernUS"), 1, 1.0F, new ArrayList<>() {}, "north america");
-    Territory mexico = new Territory("mexico", player1, Util.getPath2d("mexico"), 1, 1.0F, new ArrayList<>() {}, "north america");
-    Territory easternUS = new Territory("eastern u.s.", player2, Util.getPath2d("easternUS"), 1, 1.0F, new ArrayList<>() {}, "north america");
-    Territory easternCanada = new Territory("eastern canada", player2, Util.getPath2d("easternCanada"), 1, 1.0F, new ArrayList<>() {}, "north america");
-    Territory greenland = new Territory("greenland", player1, Util.getPath2d("greenland"), 1, 1.0F, new ArrayList<>() {}, "north america");
+    Territory nwt = new Territory("nwt", null, Util.getPath2d("nwt"), 1, 1.0F, new ArrayList<>() {}, "north america");
+    Territory alberta = new Territory("alberta", null, Util.getPath2d("alberta"), 1, 1.0F, new ArrayList<>() {}, "north america");
+    Territory alaska = new Territory("alaska", null, Util.getPath2d("alaska"), 1, 1.0F, new ArrayList<>() {}, "north america");
+    Territory ontario = new Territory("ontario", null, Util.getPath2d("ontario"), 1, 1.0F, new ArrayList<>() {}, "north america");
+    Territory westernUS = new Territory("western u.s.", null, Util.getPath2d("westernUS"), 1, 1.0F, new ArrayList<>() {}, "north america");
+    Territory mexico = new Territory("mexico", null, Util.getPath2d("mexico"), 1, 1.0F, new ArrayList<>() {}, "north america");
+    Territory easternUS = new Territory("eastern u.s.", null, Util.getPath2d("easternUS"), 1, 1.0F, new ArrayList<>() {}, "north america");
+    Territory easternCanada = new Territory("eastern canada", null, Util.getPath2d("easternCanada"), 1, 1.0F, new ArrayList<>() {}, "north america");
+    Territory greenland = new Territory("greenland", null, Util.getPath2d("greenland"), 1, 1.0F, new ArrayList<>() {}, "north america");
 
     // stores all territories
     ArrayList<Territory> allTerritories = new ArrayList<>();
@@ -72,14 +72,48 @@ public class Main extends JFrame {
         allTerritories.add(easternCanada);
         allTerritories.add(greenland);
 
-        // add territories owned by each player to player.territories arraylist
+        // randomly assign territories to each player
+        Collections.shuffle(allTerritories);
+
+        // ********************************** add players 3 & 4 once created ************************************
+
         for (Territory territory : allTerritories) {
-            if (territory.parent == player1) {
+            if (player1.territories.size() < allTerritories.size() / game.players.size()) { // evenly distribute territories
+                territory.parent = player1;
                 player1.territories.add(territory);
-            } else if (territory.parent == player2) {
+
+                player1.deployedTroops++;
+                player1.undeployedTroops--;
+
+            } else if (player2.territories.size() < allTerritories.size() / game.players.size()) {
+                territory.parent = player2;
                 player2.territories.add(territory);
+
+                player2.deployedTroops++;
+                player2.undeployedTroops--;
+
+            } else { // leftover territories present; randomly assigned to players
+                int leftOverAssignment = (int) (Math.random() * game.players.size()) + 1;
+
+                if (leftOverAssignment == 1) {
+                    territory.parent = player1;
+                    player1.territories.add(territory);
+
+                    player1.deployedTroops++;
+                    player1.undeployedTroops--;
+
+                } else if (leftOverAssignment == 2) {
+                    territory.parent = player2;
+                    player2.territories.add(territory);
+
+                    player2.deployedTroops++;
+                    player2.undeployedTroops--;
+                }
             }
         }
+
+        // semi-randomly deploy troops to each player's territories
+
 
         // add territories belonging to each continent to their respective arraylist
         for (Territory territory : allTerritories) {
