@@ -504,7 +504,7 @@ public class Main extends JFrame {
                                 game.attackBtnContainer.setVisible(false);
                             }
 
-
+                            game.getTurn().highlightAtkEligibleTerritories();
 
                             game.attackStatus.setText("select a territory");
                             game.endAttackBtnContainer.setVisible(true);
@@ -572,6 +572,9 @@ public class Main extends JFrame {
             game.draftPhaseInfo.setVisible(false);
 
             game.attackPhaseInfo.setVisible(true);
+
+            game.getTurn().highlightAtkEligibleTerritories();
+            repaint();
         });
 
         // attack phase btns

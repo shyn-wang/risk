@@ -77,9 +77,10 @@ public class Player {
 
     public void highlightAtkEligibleTerritories() {
         for (Territory territory : territories) {
-            for (Territory adjTerritory : territories) {
-                if (adjTerritory.parent != territory.parent) {
+            for (Territory adjTerritory : territory.adjacentTerritories) {
+                if (adjTerritory.parent != territory.parent && territory.troops > 1) {
                     territory.colour = territory.parent.highlightColour;
+                    break; // only one valid adjacent territory is required at minimum
                 }
             }
         }

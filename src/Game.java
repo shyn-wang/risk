@@ -499,11 +499,11 @@ public class Game {
                         attackAttackingTerritory.opacity = 1.0F;
                         attackAttackingTerritory.parent = attackStartingTerritory.parent; // ********************** captured territory parent changes to attacking territory parent *************
 
-                        attackAttackingTerritory.parent.resetTerritoryColours();
-                        attackAttackingTerritory.parent.highlightAtkEligibleTerritories();
-
                         attackStartingTerritory.updateTroops(moveTroops * -1);
                         attackAttackingTerritory.updateTroops(moveTroops);
+
+                        attackAttackingTerritory.parent.resetTerritoryColours();
+                        attackAttackingTerritory.parent.highlightAtkEligibleTerritories(); // must be called after troop counters are updated
 
                         attackStartingTerritory = null;
                         attackAttackingTerritory = null;
