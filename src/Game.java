@@ -7,6 +7,7 @@ import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 
 public class Game {
     int turnCounter;
@@ -24,6 +25,8 @@ public class Game {
     Territory atkWinner;
     int atkTroopsLost;
     int defTroopsLost;
+
+    ArrayList<Territory> fortifyValidTerritories;
 
     JPanel roundInfo;
     JLabel turnLabel;
@@ -68,6 +71,7 @@ public class Game {
         this.atkTroopsLost = 0;
         this.defTroopsLost = 0;
         this.round = 1;
+        this.fortifyValidTerritories = null;
 
         // create round info panel
         this.roundInfo = new JPanel(null);
@@ -611,6 +615,46 @@ public class Game {
             dialog.add(gameReport);
 
             dialog.setVisible(true);
+        }
+    }
+
+    public void findAllTerritoriesThatCanBeFortified() {
+        ArrayList<Territory> uncheckedAdjTerritories = new ArrayList<>(fortifyStartingTerritory.adjacentTerritories); // ************** arraylists are reference types; uncheckedAdjTerritories must be given a copy, otherwise changes made to it will also affect the original
+        ArrayList<Territory> stagingArea = new ArrayList<>();
+        ArrayList<Territory> checkedTerritories = new ArrayList<>();
+        HashSet<Territory> duplicateRemover = new HashSet<>();
+
+        searchAlgorithm: // algorithm determines if click is on a territory that is connected to the starting territory either directly or through other territories owned by the player; troops can only be moved to territories that have a path to the starting territory that is comprised of player owned territories
+        while (true) {
+            stagingArea.clear();
+
+            // loop through all adjacent territories (initially for the starting territory's adjacent territories, then for the adjacent territories of the adjacent territories, etc.)
+            for (int i = 0; i < uncheckedAdjTerritories.size(); i++) {
+                if (uncheckedAdjTerritories.get(i).parent.equals(fortifyStartingTerritory.parent)) { // checks for player owned territories
+                    stagingArea.add(uncheckedAdjTerritories.get(i));
+                    checkedTerritories.add(uncheckedAdjTerritories.get(i));
+                }
+            }
+
+            if (!stagingArea.isEmpty()) { // not empty = more possible paths to the clicked territory that are unchecked
+                uncheckedAdjTerritories.clear();
+                duplicateRemover.clear();
+
+                // find all adjacent territories of territories in staging area and add to a hashset (does not allow duplicates to be added; territories may share the same adjacent territories)
+                for (int i = 0; i < stagingArea.size(); i++) {
+                    for (int j = 0; j < stagingArea.get(i).adjacentTerritories.size(); j++) {
+                        if (!checkedTerritories.contains(stagingArea.get(i).adjacentTerritories.get(j))) { // prevents infinite loop; territories that adjacent territories branch off from are not re-added
+                            duplicateRemover.add(stagingArea.get(i).adjacentTerritories.get(j)); // prevents duplicates; territories may have the same adjacent territories
+                        }
+                    }
+                }
+
+                uncheckedAdjTerritories.addAll(duplicateRemover);
+
+            } else { // no more paths exist
+                fortifyValidTerritories = checkedTerritories;
+                break searchAlgorithm;
+            }
         }
     }
 }

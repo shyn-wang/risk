@@ -1,20 +1,16 @@
 import javax.swing.*;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.StyleConstants;
-import javax.swing.text.StyledDocument;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 
 public class Main extends JFrame {
     // create game object
     Game game = new Game(new ArrayList<>() {}, "draft", true);
 
     // create player objects
-    Player player1 = new Player("player 1", Color.decode("#04ECF0"), Color.decode("#6AF2F0"), new ArrayList<>() {}, 0, 30, true);
+    Player player1 = new Player("player 1", Color.decode("#04D4F0"), Color.decode("#04ECF0"), new ArrayList<>() {}, 0, 30, true);
     Player player2 = new Player("player 2", Color.decode("#FF0BAC"), Color.decode("#FA53A0"), new ArrayList<>() {}, 0, 30, true);
 
     // create territory objects
@@ -239,7 +235,7 @@ public class Main extends JFrame {
 
         // create game info panel
         JPanel infoPanel = new JPanel(null);
-        infoPanel.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, java.awt.Color.BLACK));
+        infoPanel.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK));
         infoPanel.setBounds(0, 980, 1920, 100);
 
         // create player stat panels
@@ -387,6 +383,9 @@ public class Main extends JFrame {
                                             game.fortifyFortifyingTerritory.opacity = 1.0F;
                                             game.fortifyFortifyingTerritory = null;
 
+                                            game.getTurn().resetTerritoryColours();
+                                            game.getTurn().highlightFortifyEligibleStartingTerritories();
+
                                             game.fortifySelectedTerritories.setText(null);
                                             game.moveTroopsPanel.setVisible(false);
 
@@ -398,8 +397,13 @@ public class Main extends JFrame {
                                     if (game.fortifyStartingTerritory == null) { // checks if starting territory is chosen (yes = second territory must be selected, no = starting territory must be selected)
                                         if (validSelection && territory.troops >= 2) {
                                             game.fortifyStartingTerritory = territory; // select owned territory to start from
-
                                             territory.opacity = 0.3F;
+
+                                            game.findAllTerritoriesThatCanBeFortified();
+
+                                            for (Territory fortTerritory : game.fortifyValidTerritories) { // highlight all territories that can be fortified
+                                                fortTerritory.colour = game.getTurn().highlightColour.brighter();
+                                            }
 
                                             repaint();
 
@@ -409,52 +413,9 @@ public class Main extends JFrame {
 
                                     } else if (game.fortifyFortifyingTerritory == null && territory != game.fortifyStartingTerritory) { // choose territory to fortify (cannot fortify the starting territory)
                                         boolean valid = false;
-                                        ArrayList<Territory> uncheckedAdjTerritories = new ArrayList<>(game.fortifyStartingTerritory.adjacentTerritories); // ************** arraylists are reference types; uncheckedAdjTerritories must be given a copy, otherwise changes made to it will also affect the original
-                                        ArrayList<Territory> stagingArea = new ArrayList<>();
-                                        ArrayList<Territory> checkedTerritories = new ArrayList<>();
-                                        HashSet<Territory> duplicateRemover = new HashSet<>();
 
-                                        searchAlgorithm: // algorithm determines if click is on a territory that is connected to the starting territory either directly or through other territories owned by the player; troops can only be moved to territories that have a path to the starting territory that is comprised of player owned territories
-                                        while (true) {
-                                            stagingArea.clear();
-
-                                            // loop through all adjacent territories (initially for the starting territory's adjacent territories, then for the adjacent territories of the adjacent territories, etc.)
-                                            for (int i = 0; i < uncheckedAdjTerritories.size(); i++) {
-                                                if (uncheckedAdjTerritories.get(i).parent.equals(game.fortifyStartingTerritory.parent)) { // checks for player owned territories
-//                                                    uncheckedAdjTerritories.get(i).opacity = 0.3F;
-//                                                    stagingArea.add(uncheckedAdjTerritories.get(i));
-//                                                    checkedTerritories.add(uncheckedAdjTerritories.get(i));
-
-                                                    if (uncheckedAdjTerritories.get(i).equals(territory)) { // checks if territory is the territory the player clicked on
-                                                        valid = true;
-                                                        break searchAlgorithm;
-
-                                                    } else {
-                                                        stagingArea.add(uncheckedAdjTerritories.get(i));
-                                                        checkedTerritories.add(uncheckedAdjTerritories.get(i));
-                                                    }
-                                                }
-                                            }
-
-                                            if (!stagingArea.isEmpty()) { // not empty = more possible paths to the clicked territory that are unchecked
-                                                uncheckedAdjTerritories.clear();
-                                                duplicateRemover.clear();
-
-                                                // find all adjacent territories of territories in staging area and add to a hashset (does not allow duplicates to be added; territories may share the same adjacent territories)
-                                                for (int i = 0; i < stagingArea.size(); i++) {
-                                                    for (int j = 0; j < stagingArea.get(i).adjacentTerritories.size(); j++) {
-                                                        if (!checkedTerritories.contains(stagingArea.get(i).adjacentTerritories.get(j))) { // prevents infinite loop; territories that adjacent territories branch off from are not re-added
-                                                            duplicateRemover.add(stagingArea.get(i).adjacentTerritories.get(j));
-                                                        }
-                                                    }
-                                                }
-
-                                                uncheckedAdjTerritories.addAll(duplicateRemover);
-
-                                            } else { // path to territory does not exist
-                                                // repaint();
-                                                break searchAlgorithm;
-                                            }
+                                        if (game.fortifyValidTerritories.contains(territory)) {
+                                            valid = true;
                                         }
 
                                         if (valid) {
@@ -535,6 +496,9 @@ public class Main extends JFrame {
                                 game.fortifyStatus.setText("select a territory");
                                 game.endTurnBtnContainer.setVisible(true);
 
+                                game.getTurn().resetTerritoryColours();
+                                game.getTurn().highlightFortifyEligibleStartingTerritories();
+
                                 repaint();
                             }
                         }
@@ -596,6 +560,10 @@ public class Main extends JFrame {
 
             game.fortifyPhaseInfo.setVisible(true);
             game.fortifyStatus.setText("select a territory");
+
+            game.getTurn().resetTerritoryColours();
+            game.getTurn().highlightFortifyEligibleStartingTerritories();
+            repaint();
         });
 
         // fortify phase btns
@@ -608,6 +576,8 @@ public class Main extends JFrame {
 
             game.fortifyFortifyingTerritory.opacity = 1.0F;
             game.fortifyFortifyingTerritory = null;
+
+            game.getTurn().resetTerritoryColours();
 
             repaint();
 
