@@ -43,4 +43,20 @@ public class Territory {
         parent.deployedTroops += change;
         parent.deployedtroopCounterLabel.setText("active troops: " + parent.deployedTroops);
     }
+
+    public void highlightAdjEnemyTerritories() {
+        for (Territory adjTerritory : adjacentTerritories) {
+            if (adjTerritory.parent != parent) {
+                adjTerritory.colour = adjTerritory.parent.highlightColour;
+            }
+        }
+    }
+
+    public void removeAdjEnemyTerritoryHighlights() {
+        for (Territory adjTerritory : adjacentTerritories) {
+            if (adjTerritory.parent != parent) {
+                adjTerritory.colour = adjTerritory.parent.defaultColour;
+            }
+        }
+    }
 }

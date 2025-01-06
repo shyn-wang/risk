@@ -312,6 +312,8 @@ public class Main extends JFrame {
 
                                 if (game.attackStartingTerritory != null) { // check if click is on different owned territory when starting territory was already previously selected; selecting new owned territory to start from (territories are reset)
                                     if (validSelection && territory.troops >= 2) {
+                                        game.attackStartingTerritory.removeAdjEnemyTerritoryHighlights();
+
                                         game.attackStartingTerritory.opacity = 1.0F;
                                         game.attackStartingTerritory = null;
 
@@ -332,6 +334,7 @@ public class Main extends JFrame {
                                     game.attackStartingTerritory = territory; // select owned territory to start from
 
                                     territory.opacity = 0.3F;
+                                    territory.highlightAdjEnemyTerritories();
 
                                     repaint();
 
@@ -493,6 +496,8 @@ public class Main extends JFrame {
                     } else if (game.phase.equals("attack")) {
                         // unselect selected territories + reset indicators
                         if (game.attackStartingTerritory != null) {
+                            game.attackStartingTerritory.removeAdjEnemyTerritoryHighlights();
+
                             game.attackStartingTerritory.opacity = 1.0F;
                             game.attackStartingTerritory = null;
 

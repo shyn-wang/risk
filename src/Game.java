@@ -416,6 +416,12 @@ public class Game {
                     attackStartingTerritory.opacity = 1.0F;
                     attackAttackingTerritory.opacity = 1.0F;
 
+                    // next three calls must be performed for starting territory parent; unlike during a win, the parent of the attacking territory never changes to that of the starting territory
+                    attackStartingTerritory.removeAdjEnemyTerritoryHighlights();
+
+                    attackStartingTerritory.parent.resetTerritoryColours();
+                    attackStartingTerritory.parent.highlightAtkEligibleTerritories(); // must be called after troop counters are updated
+
                     attackStartingTerritory = null;
                     attackAttackingTerritory = null;
 
@@ -501,6 +507,8 @@ public class Game {
 
                         attackStartingTerritory.updateTroops(moveTroops * -1);
                         attackAttackingTerritory.updateTroops(moveTroops);
+
+                        attackStartingTerritory.removeAdjEnemyTerritoryHighlights();
 
                         attackAttackingTerritory.parent.resetTerritoryColours();
                         attackAttackingTerritory.parent.highlightAtkEligibleTerritories(); // must be called after troop counters are updated

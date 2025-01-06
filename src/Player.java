@@ -85,4 +85,8 @@ public class Player {
             }
         }
     }
+
+    public void highlightFortifyEligibleTerritories() {
+
+    }
 }
