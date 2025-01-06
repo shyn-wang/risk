@@ -14,21 +14,21 @@ public class Main extends JFrame {
     Game game = new Game(new ArrayList<>() {}, "draft", true);
 
     // create player objects
-    Player player1 = new Player("player 1", Color.CYAN, new ArrayList<>() {}, 0, 30, true);
-    Player player2 = new Player("player 2", Color.MAGENTA, new ArrayList<>() {}, 0, 30, true);
+    Player player1 = new Player("player 1", Color.decode("#04ECF0"), Color.decode("#6AF2F0"), new ArrayList<>() {}, 0, 30, true);
+    Player player2 = new Player("player 2", Color.decode("#FF0BAC"), Color.decode("#FA53A0"), new ArrayList<>() {}, 0, 30, true);
 
     // create territory objects
 
     // north america
-    Territory nwt = new Territory("nwt", null, Util.getPath2d("nwt"), 1, 1.0F, new ArrayList<>() {}, "north america");
-    Territory alberta = new Territory("alberta", null, Util.getPath2d("alberta"), 1, 1.0F, new ArrayList<>() {}, "north america");
-    Territory alaska = new Territory("alaska", null, Util.getPath2d("alaska"), 1, 1.0F, new ArrayList<>() {}, "north america");
-    Territory ontario = new Territory("ontario", null, Util.getPath2d("ontario"), 1, 1.0F, new ArrayList<>() {}, "north america");
-    Territory westernUS = new Territory("western u.s.", null, Util.getPath2d("westernUS"), 1, 1.0F, new ArrayList<>() {}, "north america");
-    Territory mexico = new Territory("mexico", null, Util.getPath2d("mexico"), 1, 1.0F, new ArrayList<>() {}, "north america");
-    Territory easternUS = new Territory("eastern u.s.", null, Util.getPath2d("easternUS"), 1, 1.0F, new ArrayList<>() {}, "north america");
-    Territory easternCanada = new Territory("eastern canada", null, Util.getPath2d("easternCanada"), 1, 1.0F, new ArrayList<>() {}, "north america");
-    Territory greenland = new Territory("greenland", null, Util.getPath2d("greenland"), 1, 1.0F, new ArrayList<>() {}, "north america");
+    Territory nwt = new Territory("nwt", null, Util.getPath2d("nwt"), 1, 1.0F, null, new ArrayList<>() {}, "north america");
+    Territory alberta = new Territory("alberta", null, Util.getPath2d("alberta"), 1, 1.0F, null, new ArrayList<>() {}, "north america");
+    Territory alaska = new Territory("alaska", null, Util.getPath2d("alaska"), 1,  1.0F, null, new ArrayList<>() {}, "north america");
+    Territory ontario = new Territory("ontario", null, Util.getPath2d("ontario"), 1, 1.0F, null, new ArrayList<>() {}, "north america");
+    Territory westernUS = new Territory("western u.s.", null, Util.getPath2d("westernUS"), 1, 1.0F, null, new ArrayList<>() {}, "north america");
+    Territory mexico = new Territory("mexico", null, Util.getPath2d("mexico"), 1, 1.0F, null, new ArrayList<>() {}, "north america");
+    Territory easternUS = new Territory("eastern u.s.", null, Util.getPath2d("easternUS"), 1, 1.0F, null, new ArrayList<>() {}, "north america");
+    Territory easternCanada = new Territory("eastern canada", null, Util.getPath2d("easternCanada"), 1, 1.0F, null, new ArrayList<>() {}, "north america");
+    Territory greenland = new Territory("greenland", null, Util.getPath2d("greenland"), 1, 1.0F, null, new ArrayList<>() {}, "north america");
 
     // stores all territories
     ArrayList<Territory> allTerritories = new ArrayList<>();
@@ -81,6 +81,7 @@ public class Main extends JFrame {
             if (player1.territories.size() < allTerritories.size() / game.players.size()) { // evenly distribute territories
                 territory.parent = player1;
                 player1.territories.add(territory);
+                territory.colour = player1.defaultColour;
 
                 player1.deployedTroops++;
                 player1.undeployedTroops--;
@@ -88,6 +89,7 @@ public class Main extends JFrame {
             } else if (player2.territories.size() < allTerritories.size() / game.players.size()) {
                 territory.parent = player2;
                 player2.territories.add(territory);
+                territory.colour = player2.defaultColour;
 
                 player2.deployedTroops++;
                 player2.undeployedTroops--;
@@ -98,6 +100,7 @@ public class Main extends JFrame {
                 if (leftOverAssignment == 1) {
                     territory.parent = player1;
                     player1.territories.add(territory);
+                    territory.colour = player1.defaultColour;
 
                     player1.deployedTroops++;
                     player1.undeployedTroops--;
@@ -105,6 +108,7 @@ public class Main extends JFrame {
                 } else if (leftOverAssignment == 2) {
                     territory.parent = player2;
                     player2.territories.add(territory);
+                    territory.colour = player2.defaultColour;
 
                     player2.deployedTroops++;
                     player2.undeployedTroops--;
@@ -173,7 +177,7 @@ public class Main extends JFrame {
                     g2d.setStroke(new BasicStroke(2));
 
                     for (Territory territory : allTerritories) {
-                        g2d.setColor(territory.getColour());
+                        g2d.setColor(territory.colour);
                         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, territory.opacity));
                         g2d.fill(territory.path2d);
                     }
@@ -282,7 +286,7 @@ public class Main extends JFrame {
                                         game.draftSelectedTerritory.opacity = 1.0F; // remove click indicator
                                     }
 
-                                    territory.opacity = 0.3F; // indicates click
+                                    territory.opacity = 0.3F; // indicates click - lighter shade
                                     repaint();
 
                                     game.draftStatus.setText(territory.name + " selected");
@@ -487,7 +491,7 @@ public class Main extends JFrame {
                         }
 
                     } else if (game.phase.equals("attack")) {
-                        // unselect selected territories) + reset indicators
+                        // unselect selected territories + reset indicators
                         if (game.attackStartingTerritory != null) {
                             game.attackStartingTerritory.opacity = 1.0F;
                             game.attackStartingTerritory = null;
@@ -499,6 +503,8 @@ public class Main extends JFrame {
                                 game.attackSelectedTerritories.setText(null);
                                 game.attackBtnContainer.setVisible(false);
                             }
+
+
 
                             game.attackStatus.setText("select a territory");
                             game.endAttackBtnContainer.setVisible(true);

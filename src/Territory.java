@@ -9,16 +9,18 @@ public class Territory {
     Player parent;
     String name;
     float opacity;
+    Color colour;
     ArrayList<Territory> adjacentTerritories;
     String continent;
     JLabel troopsLabel;
 
-    public Territory(String name, Player parent, Path2D path2d, int troops, float opacity, ArrayList<Territory> adjacentTerritories, String continent) {
+    public Territory(String name, Player parent, Path2D path2d, int troops, float opacity, Color colour, ArrayList<Territory> adjacentTerritories, String continent) {
         this.name = name;
         this.parent = parent;
         this.path2d = path2d;
         this.troops = troops;
         this.opacity = opacity;
+        this.colour = colour;
         this.adjacentTerritories = adjacentTerritories;
         this.continent = continent;
 
@@ -27,7 +29,7 @@ public class Territory {
     }
 
     public Color getColour() {
-        return parent.colour;
+        return parent.defaultColour;
     }
 
     public void createLabel(JPanel displayPanel, int x, int y) {

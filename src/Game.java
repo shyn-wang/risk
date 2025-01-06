@@ -205,7 +205,7 @@ public class Game {
     }
 
     public JPanel initializeRoundInfoPanel() {
-        roundInfo.setBackground(getTurn().colour);
+        roundInfo.setBackground(getTurn().defaultColour);
         turnLabel.setText("turn: " + getTurn().name);
         phaseLabel.setText("phase: " + phase);
 
@@ -213,13 +213,13 @@ public class Game {
     }
 
     public void updateRoundInfoPanel() {
-        roundInfo.setBackground(getTurn().colour);
+        roundInfo.setBackground(getTurn().defaultColour);
         turnLabel.setText("turn: " + getTurn().name);
         phaseLabel.setText("phase: " + phase);
     }
 
     public JPanel initializeDraftPhaseInfoPanel() {
-        draftPhaseInfo.setBackground(getTurn().colour);
+        draftPhaseInfo.setBackground(getTurn().defaultColour);
         availableTroops.setText("available troops: " + getTurn().undeployedTroops);
 
         for (int i = 1; i <= getTurn().undeployedTroops; i++) {
@@ -230,7 +230,7 @@ public class Game {
     }
 
     public void refreshDraftPhaseInfoPanel() {
-        draftPhaseInfo.setBackground(getTurn().colour);
+        draftPhaseInfo.setBackground(getTurn().defaultColour);
 
         draftStatus.setText("select a territory");
         nextPhaseBtnContainer.setVisible(false);
@@ -322,23 +322,23 @@ public class Game {
     }
 
     public JPanel initializeAttackPhaseInfoPanel() {
-        attackPhaseInfo.setBackground(getTurn().colour);
+        attackPhaseInfo.setBackground(getTurn().defaultColour);
 
         return attackPhaseInfo;
     }
 
     public void refreshAttackPhaseInfoPanel() {
-        attackPhaseInfo.setBackground(getTurn().colour);
+        attackPhaseInfo.setBackground(getTurn().defaultColour);
     }
 
     public JPanel initializeFortifyPhaseInfoPanel() {
-        fortifyPhaseInfo.setBackground(getTurn().colour);
+        fortifyPhaseInfo.setBackground(getTurn().defaultColour);
 
         return fortifyPhaseInfo;
     }
 
     public void refreshFortifyPhaseInfoPanel() {
-        fortifyPhaseInfo.setBackground(getTurn().colour);
+        fortifyPhaseInfo.setBackground(getTurn().defaultColour);
     }
 
     public Player getTurn() {
@@ -498,6 +498,9 @@ public class Game {
                         attackStartingTerritory.opacity = 1.0F;
                         attackAttackingTerritory.opacity = 1.0F;
                         attackAttackingTerritory.parent = attackStartingTerritory.parent; // ********************** captured territory parent changes to attacking territory parent *************
+
+                        attackAttackingTerritory.parent.resetTerritoryColours();
+                        attackAttackingTerritory.parent.highlightAtkEligibleTerritories();
 
                         attackStartingTerritory.updateTroops(moveTroops * -1);
                         attackAttackingTerritory.updateTroops(moveTroops);

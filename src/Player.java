@@ -6,7 +6,8 @@ import java.util.ArrayList;
 
 public class Player {
     String name;
-    Color colour;
+    Color defaultColour;
+    Color highlightColour;
     ArrayList<Territory> territories;
     int deployedTroops;
     int undeployedTroops;
@@ -16,9 +17,10 @@ public class Player {
     JLabel territoryCounterLabel;
     boolean inGame;
 
-    public Player(String name, Color colour, ArrayList<Territory> territories, int deployedTroops, int undeployedTroops, boolean inGame) {
+    public Player(String name, Color defaultColour, Color highlightColour, ArrayList<Territory> territories, int deployedTroops, int undeployedTroops, boolean inGame) {
         this.name = name;
-        this.colour = colour;
+        this.defaultColour = defaultColour;
+        this.highlightColour = highlightColour;
         this.territories = territories;
         this.deployedTroops = deployedTroops;
         this.undeployedTroops = undeployedTroops;
@@ -27,7 +29,7 @@ public class Player {
         this.statsPanel = new JPanel();
         BoxLayout layout = new BoxLayout(this.statsPanel, BoxLayout.Y_AXIS);
         statsPanel.setLayout(layout);
-        statsPanel.setBackground(colour);
+        statsPanel.setBackground(defaultColour);
         this.statsPanel.setBorder(new CompoundBorder(
                 BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK), // top line
                 new EmptyBorder(10, 10, 0, 0) // padding
@@ -65,5 +67,21 @@ public class Player {
     public void updateLabels() {
         deployedtroopCounterLabel.setText("active troops: " + deployedTroops);
         territoryCounterLabel.setText("territories: " + getTotalTerritories());
+    }
+
+    public void resetTerritoryColours() {
+        for (Territory territory : territories) {
+            territory.colour = defaultColour;
+        }
+    }
+
+    public void highlightAtkEligibleTerritories() {
+        for (Territory territory : territories) {
+            for (Territory adjTerritory : territories) {
+                if (adjTerritory.parent != territory.parent) {
+                    territory.colour = territory.parent.highlightColour;
+                }
+            }
+        }
     }
 }
