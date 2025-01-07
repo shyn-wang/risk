@@ -26,6 +26,12 @@ public class Main extends JFrame {
     Territory easternCanada = new Territory("eastern canada", Util.getPath2d("easternCanada"), "north america");
     Territory greenland = new Territory("greenland", Util.getPath2d("greenland"), "north america");
 
+    // south america
+    Territory venezuela = new Territory("venezuela", Util.getPath2d("venezuela"), "south america");
+    Territory peru = new Territory("peru", Util.getPath2d("peru"), "south america");
+    Territory argentina = new Territory("argentina", Util.getPath2d("argentina"), "south america");
+    Territory brazil = new Territory("brazil", Util.getPath2d("brazil"), "south america");
+
     // stores all territories
     ArrayList<Territory> allTerritories = new ArrayList<>();
 
@@ -52,12 +58,22 @@ public class Main extends JFrame {
         Collections.addAll(alaska.adjacentTerritories, alberta, nwt); // **add kamchatka once implemented**
         Collections.addAll(ontario.adjacentTerritories, alberta, nwt, easternCanada, easternUS, westernUS, greenland);
         Collections.addAll(westernUS.adjacentTerritories, alberta, ontario, mexico, easternUS);
-        Collections.addAll(mexico.adjacentTerritories, westernUS, easternUS); //
+        Collections.addAll(mexico.adjacentTerritories, westernUS, easternUS, venezuela);
         Collections.addAll(easternUS.adjacentTerritories, easternCanada, ontario, westernUS, mexico);
         Collections.addAll(easternCanada.adjacentTerritories, ontario, easternUS, greenland);
         Collections.addAll(greenland.adjacentTerritories, ontario, easternCanada, nwt); //
 
+        // south america
+        Collections.addAll(venezuela.adjacentTerritories, mexico, peru, brazil);
+        Collections.addAll(peru.adjacentTerritories, venezuela, argentina, brazil);
+        Collections.addAll(argentina.adjacentTerritories, peru, brazil);
+        Collections.addAll(brazil.adjacentTerritories, venezuela, peru, argentina); //
+
+        // south america
+
         // add territories to allTerritories arraylist
+
+        // north america
         allTerritories.add(nwt);
         allTerritories.add(alberta);
         allTerritories.add(alaska);
@@ -67,6 +83,12 @@ public class Main extends JFrame {
         allTerritories.add(easternUS);
         allTerritories.add(easternCanada);
         allTerritories.add(greenland);
+
+        // south america
+        allTerritories.add(venezuela);
+        allTerritories.add(peru);
+        allTerritories.add(argentina);
+        allTerritories.add(brazil);
 
         // randomly assign territories to each player
         Collections.shuffle(allTerritories);
@@ -232,6 +254,12 @@ public class Main extends JFrame {
         westernUS.createLabel(mapPanel, 235, 250);
         easternUS.createLabel(mapPanel, 333, 265);
         mexico.createLabel(mapPanel, 255, 365);
+
+        // south america
+        venezuela.createLabel(mapPanel, 350, 427);
+        peru.createLabel(mapPanel, 340, 535);
+        argentina.createLabel(mapPanel, 360, 650);
+        brazil.createLabel(mapPanel, 440, 515);
 
         // create game info panel
         JPanel infoPanel = new JPanel(null);
