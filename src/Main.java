@@ -16,15 +16,15 @@ public class Main extends JFrame {
     // create territory objects
 
     // north america
-    Territory nwt = new Territory("nwt", null, Util.getPath2d("nwt"), 1, 1.0F, null, new ArrayList<>() {}, "north america");
-    Territory alberta = new Territory("alberta", null, Util.getPath2d("alberta"), 1, 1.0F, null, new ArrayList<>() {}, "north america");
-    Territory alaska = new Territory("alaska", null, Util.getPath2d("alaska"), 1,  1.0F, null, new ArrayList<>() {}, "north america");
-    Territory ontario = new Territory("ontario", null, Util.getPath2d("ontario"), 1, 1.0F, null, new ArrayList<>() {}, "north america");
-    Territory westernUS = new Territory("western u.s.", null, Util.getPath2d("westernUS"), 1, 1.0F, null, new ArrayList<>() {}, "north america");
-    Territory mexico = new Territory("mexico", null, Util.getPath2d("mexico"), 1, 1.0F, null, new ArrayList<>() {}, "north america");
-    Territory easternUS = new Territory("eastern u.s.", null, Util.getPath2d("easternUS"), 1, 1.0F, null, new ArrayList<>() {}, "north america");
-    Territory easternCanada = new Territory("eastern canada", null, Util.getPath2d("easternCanada"), 1, 1.0F, null, new ArrayList<>() {}, "north america");
-    Territory greenland = new Territory("greenland", null, Util.getPath2d("greenland"), 1, 1.0F, null, new ArrayList<>() {}, "north america");
+    Territory nwt = new Territory("nwt", Util.getPath2d("nwt"), "north america");
+    Territory alberta = new Territory("alberta", Util.getPath2d("alberta"), "north america");
+    Territory alaska = new Territory("alaska", Util.getPath2d("alaska"), "north america");
+    Territory ontario = new Territory("ontario", Util.getPath2d("ontario"), "north america");
+    Territory westernUS = new Territory("western u.s.", Util.getPath2d("westernUS"), "north america");
+    Territory mexico = new Territory("mexico", Util.getPath2d("mexico"), "north america");
+    Territory easternUS = new Territory("eastern u.s.", Util.getPath2d("easternUS"), "north america");
+    Territory easternCanada = new Territory("eastern canada", Util.getPath2d("easternCanada"), "north america");
+    Territory greenland = new Territory("greenland", Util.getPath2d("greenland"), "north america");
 
     // stores all territories
     ArrayList<Territory> allTerritories = new ArrayList<>();

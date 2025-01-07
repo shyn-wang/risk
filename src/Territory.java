@@ -14,14 +14,14 @@ public class Territory {
     String continent;
     JLabel troopsLabel;
 
-    public Territory(String name, Player parent, Path2D path2d, int troops, float opacity, Color colour, ArrayList<Territory> adjacentTerritories, String continent) {
+    public Territory(String name, Path2D path2d, String continent) {
         this.name = name;
-        this.parent = parent;
+        this.parent = null;
         this.path2d = path2d;
-        this.troops = troops;
-        this.opacity = opacity;
-        this.colour = colour;
-        this.adjacentTerritories = adjacentTerritories;
+        this.troops = 1;
+        this.opacity = 1.0F;
+        this.colour = null;
+        this.adjacentTerritories = new ArrayList<>() {};
         this.continent = continent;
 
         this.troopsLabel = new JLabel(String.valueOf(troops));
