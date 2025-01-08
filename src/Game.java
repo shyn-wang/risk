@@ -13,7 +13,6 @@ public class Game {
     int turnCounter;
     ArrayList<Player> players;
     String phase;
-    boolean live;
     int round;
 
     Territory draftSelectedTerritory;
@@ -57,11 +56,10 @@ public class Game {
     JPanel endTurnBtnContainer;
     JButton endTurnBtn;
 
-    public Game(ArrayList<Player> players, String phase, boolean live) {
+    public Game() {
         this.turnCounter = 1;
-        this.players = players;
-        this.phase = phase;
-        this.live = live;
+        this.players = new ArrayList<Player>();
+        this.phase = "draft";
         this.draftSelectedTerritory = null;
         this.attackStartingTerritory = null;
         this.attackAttackingTerritory = null;

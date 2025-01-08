@@ -7,7 +7,7 @@ import java.util.Collections;
 
 public class Main extends JFrame {
     // create game object
-    Game game = new Game(new ArrayList<>() {}, "draft", true);
+    Game game = new Game();
 
     // create player objects
     Player player1 = new Player("player 1", Color.decode("#04D4F0"), Color.decode("#04ECF0"), new ArrayList<>() {}, 0, 30, true);
