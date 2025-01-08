@@ -32,6 +32,14 @@ public class Main extends JFrame {
     Territory argentina = new Territory("argentina", Util.getPath2d("argentina"), "south america");
     Territory brazil = new Territory("brazil", Util.getPath2d("brazil"), "south america");
 
+    // africa
+    Territory northAfrica = new Territory("north africa", Util.getPath2d("north africa"), "africa");
+    Territory centralAfrica = new Territory("central africa", Util.getPath2d("central africa"), "africa");
+    Territory southAfrica = new Territory("south africa", Util.getPath2d("south africa"), "africa");
+    Territory madagascar = new Territory("madagascar", Util.getPath2d("madagascar"), "africa");
+    Territory egypt = new Territory("egypt", Util.getPath2d("egypt"), "africa");
+    Territory easternAfrica = new Territory("eastern africa", Util.getPath2d("eastern africa"), "africa");
+
     // stores all territories
     ArrayList<Territory> allTerritories = new ArrayList<>();
 
@@ -67,9 +75,17 @@ public class Main extends JFrame {
         Collections.addAll(venezuela.adjacentTerritories, mexico, peru, brazil);
         Collections.addAll(peru.adjacentTerritories, venezuela, argentina, brazil);
         Collections.addAll(argentina.adjacentTerritories, peru, brazil);
-        Collections.addAll(brazil.adjacentTerritories, venezuela, peru, argentina); //
+        Collections.addAll(brazil.adjacentTerritories, venezuela, peru, argentina, northAfrica);
 
-        // south america
+        // africa
+        Collections.addAll(northAfrica.adjacentTerritories, brazil, centralAfrica, egypt, easternAfrica);
+        Collections.addAll(centralAfrica.adjacentTerritories, northAfrica, southAfrica, easternAfrica);
+        Collections.addAll(southAfrica.adjacentTerritories, centralAfrica, madagascar, easternAfrica);
+        Collections.addAll(madagascar.adjacentTerritories, southAfrica, easternAfrica);
+        Collections.addAll(egypt.adjacentTerritories, northAfrica, easternAfrica); //
+        Collections.addAll(easternAfrica.adjacentTerritories, northAfrica, centralAfrica, southAfrica, madagascar, egypt); //
+
+
 
         // add territories to allTerritories arraylist
 
@@ -89,6 +105,14 @@ public class Main extends JFrame {
         allTerritories.add(peru);
         allTerritories.add(argentina);
         allTerritories.add(brazil);
+
+        // africa
+        allTerritories.add(northAfrica);
+        allTerritories.add(centralAfrica);
+        allTerritories.add(southAfrica);
+        allTerritories.add(madagascar);
+        allTerritories.add(egypt);
+        allTerritories.add(easternAfrica);
 
         // randomly assign territories to each player
         Collections.shuffle(allTerritories);
@@ -260,6 +284,14 @@ public class Main extends JFrame {
         peru.createLabel(mapPanel, 340, 535);
         argentina.createLabel(mapPanel, 360, 650);
         brazil.createLabel(mapPanel, 440, 515);
+
+        // africa
+        northAfrica.createLabel(mapPanel,630, 480);
+        egypt.createLabel(mapPanel, 730, 440);
+        easternAfrica.createLabel(mapPanel, 800, 540);
+        centralAfrica.createLabel(mapPanel, 730, 590);
+        southAfrica.createLabel(mapPanel, 740, 700);
+        madagascar.createLabel(mapPanel, 850, 700);
 
         // create game info panel
         JPanel infoPanel = new JPanel(null);
