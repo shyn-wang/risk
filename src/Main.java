@@ -324,6 +324,10 @@ public class Main extends JFrame {
         iceland.createLabel(mapPanel, 585, 125);
         greatBritain.createLabel(mapPanel, 572, 218);
         westernEurope.createLabel(mapPanel, 580, 350);
+        southernEurope.createLabel(mapPanel, 692, 312);
+        northernEurope.createLabel(mapPanel, 682, 242);
+        scandinavia.createLabel(mapPanel, 672, 135);
+        russia.createLabel(mapPanel, 790, 200);
 
         // create game info panel
         JPanel infoPanel = new JPanel(null);
@@ -681,6 +685,9 @@ public class Main extends JFrame {
         });
 
         game.endTurnBtn.addActionListener(e -> {
+            game.getTurn().resetTerritoryColours(); // reset if troops were never moved
+            repaint();
+
             game.phase = "draft";
             game.turnCounter++;
 
