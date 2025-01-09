@@ -104,7 +104,7 @@ public class Game {
         this.draftPhaseInfo.add(availableTroops);
 
         this.draftStatus = new JLabel("select a territory");
-        this.draftStatus.setBounds(250, 22, 170, 20);
+        this.draftStatus.setBounds(250, 22, 180, 20);
         this.draftStatus.setFont(new Font("Helvetica", Font.BOLD, 15));
         this.draftPhaseInfo.add(draftStatus);
 

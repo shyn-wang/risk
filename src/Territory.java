@@ -28,10 +28,6 @@ public class Territory {
         this.troopsLabel.setFont(new Font("Helvetica", Font.BOLD, 18));
     }
 
-    public Color getColour() {
-        return parent.defaultColour;
-    }
-
     public void createLabel(JPanel displayPanel, int x, int y) {
         troopsLabel.setBounds(x, y, 100, 100);
         displayPanel.add(troopsLabel);
