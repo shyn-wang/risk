@@ -17,14 +17,14 @@ public class Player {
     JLabel territoryCounterLabel;
     boolean inGame;
 
-    public Player(String name, Color defaultColour, Color highlightColour, ArrayList<Territory> territories, int deployedTroops, int undeployedTroops, boolean inGame) {
+    public Player(String name, Color defaultColour, Color highlightColour) {
         this.name = name;
         this.defaultColour = defaultColour;
         this.highlightColour = highlightColour;
-        this.territories = territories;
-        this.deployedTroops = deployedTroops;
-        this.undeployedTroops = undeployedTroops;
-        this.inGame = inGame;
+        this.territories = new ArrayList<>();
+        this.deployedTroops = 0;
+        this.undeployedTroops = 30;
+        this.inGame = true;
 
         this.statsPanel = new JPanel();
         BoxLayout layout = new BoxLayout(this.statsPanel, BoxLayout.Y_AXIS);

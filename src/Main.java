@@ -10,8 +10,9 @@ public class Main extends JFrame {
     Game game = new Game();
 
     // create player objects
-    Player player1 = new Player("player 1", Color.decode("#04D4F0"), Color.decode("#04ECF0"), new ArrayList<>() {}, 0, 30, true);
-    Player player2 = new Player("player 2", Color.decode("#FF0BAC"), Color.decode("#FA53A0"), new ArrayList<>() {}, 0, 30, true);
+    Player player1 = new Player("player 1", Color.decode("#04D4F0"), Color.decode("#04ECF0"));
+    Player player2 = new Player("player 2", Color.decode("#FA53A0"), Color.decode("#FF0BAC"));
+    Player player3 = new Player("player 3", Color.decode("#57cc99"), Color.decode("#80ed99"));
 
     // create territory objects
 
@@ -49,6 +50,13 @@ public class Main extends JFrame {
     Territory southernEurope = new Territory("southern europe", Util.getPath2d("southern europe"), "europe");
     Territory russia = new Territory("russia", Util.getPath2d("russia"), "europe");
 
+    // asia
+    Territory middleEast = new Territory("middle east", Util.getPath2d("middle east"), "asia");
+    Territory afghanistan = new Territory("afghanistan", Util.getPath2d("afghanistan"), "asia");
+    Territory india = new Territory("india", Util.getPath2d("india"), "asia");
+    Territory southeastAsia = new Territory("southeast asia", Util.getPath2d("southeast asia"), "asia");
+    Territory china = new Territory("china", Util.getPath2d("china"), "asia");
+
     // stores all territories
     ArrayList<Territory> allTerritories = new ArrayList<>();
 
@@ -65,7 +73,7 @@ public class Main extends JFrame {
         JPanel contentPane = new JPanel(null);
 
         // add players to game
-        Collections.addAll(game.players, player1, player2);
+        Collections.addAll(game.players, player1, player2, player3);
 
         // set adjacent territories for each territory
 
@@ -91,8 +99,8 @@ public class Main extends JFrame {
         Collections.addAll(centralAfrica.adjacentTerritories, northAfrica, southAfrica, easternAfrica);
         Collections.addAll(southAfrica.adjacentTerritories, centralAfrica, madagascar, easternAfrica);
         Collections.addAll(madagascar.adjacentTerritories, southAfrica, easternAfrica);
-        Collections.addAll(egypt.adjacentTerritories, northAfrica, easternAfrica, southernEurope); //®
-        Collections.addAll(easternAfrica.adjacentTerritories, northAfrica, centralAfrica, southAfrica, madagascar, egypt); //
+        Collections.addAll(egypt.adjacentTerritories, northAfrica, easternAfrica, southernEurope, middleEast);
+        Collections.addAll(easternAfrica.adjacentTerritories, northAfrica, centralAfrica, southAfrica, madagascar, egypt, middleEast);
 
         // europe
         Collections.addAll(iceland.adjacentTerritories, greenland, greatBritain, scandinavia);
@@ -100,8 +108,15 @@ public class Main extends JFrame {
         Collections.addAll(westernEurope.adjacentTerritories, greatBritain, northAfrica, northernEurope, southernEurope);
         Collections.addAll(scandinavia.adjacentTerritories, iceland, greatBritain, northernEurope, russia);
         Collections.addAll(northernEurope.adjacentTerritories, scandinavia, greatBritain, westernEurope, southernEurope, russia);
-        Collections.addAll(southernEurope.adjacentTerritories, northernEurope, westernEurope, northAfrica, russia, egypt); //
-        Collections.addAll(russia.adjacentTerritories, scandinavia, northernEurope, southernEurope); //
+        Collections.addAll(southernEurope.adjacentTerritories, northernEurope, westernEurope, northAfrica, russia, egypt, middleEast);
+        Collections.addAll(russia.adjacentTerritories, scandinavia, northernEurope, southernEurope, afghanistan, middleEast); //
+
+        // asia
+        Collections.addAll(middleEast.adjacentTerritories, russia, afghanistan, southernEurope, egypt, easternAfrica, india);
+        Collections.addAll(india.adjacentTerritories, middleEast, afghanistan, china, southeastAsia);
+        Collections.addAll(afghanistan.adjacentTerritories, russia, middleEast, india, china); //
+        Collections.addAll(china.adjacentTerritories, afghanistan, india, southeastAsia); //
+        Collections.addAll(southeastAsia.adjacentTerritories, china, india); //
 
 
 
@@ -141,6 +156,13 @@ public class Main extends JFrame {
         allTerritories.add(southernEurope);
         allTerritories.add(russia);
 
+        // asia
+        allTerritories.add(middleEast);
+        allTerritories.add(afghanistan);
+        allTerritories.add(india);
+        allTerritories.add(china);
+        allTerritories.add(southeastAsia);
+
         // randomly assign territories to each player
         Collections.shuffle(allTerritories);
 
@@ -163,6 +185,14 @@ public class Main extends JFrame {
                 player2.deployedTroops++;
                 player2.undeployedTroops--;
 
+            } else if (player3.territories.size() < allTerritories.size() / game.players.size()) {
+                territory.parent = player3;
+                player3.territories.add(territory);
+                territory.colour = player3.defaultColour;
+
+                player3.deployedTroops++;
+                player3.undeployedTroops--;
+
             } else { // leftover territories present; randomly assigned to players
                 int leftOverAssignment = (int) (Math.random() * game.players.size()) + 1;
 
@@ -181,6 +211,14 @@ public class Main extends JFrame {
 
                     player2.deployedTroops++;
                     player2.undeployedTroops--;
+
+                } else if (leftOverAssignment == 3) {
+                    territory.parent = player3;
+                    player3.territories.add(territory);
+                    territory.colour = player3.defaultColour;
+
+                    player3.deployedTroops++;
+                    player3.undeployedTroops--;
                 }
             }
         }
@@ -337,6 +375,7 @@ public class Main extends JFrame {
         // create player stat panels
         infoPanel.add(player1.initializePanel(0, 0));
         infoPanel.add(player2.initializePanel(110, 0));
+        infoPanel.add(player3.initializePanel(220, 0));
 
         // create round info panel
         infoPanel.add(game.initializeRoundInfoPanel());
@@ -467,6 +506,7 @@ public class Main extends JFrame {
                                     for (Territory adjTerritory : territory.adjacentTerritories) {
                                         if (adjTerritory.parent == territory.parent) {
                                             validSelection = true; // territory clicked has at least one adjacent territory owned by the same player
+                                            break; 
                                         }
                                     }
 
@@ -705,7 +745,7 @@ public class Main extends JFrame {
         // create gui
         setContentPane(contentPane);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(1920, 1080);
+        setSize(1708, 1070);
         setLocationRelativeTo(null);
         setResizable(false);
         setVisible(true);

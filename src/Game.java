@@ -539,22 +539,26 @@ public class Game {
                 break;
             }
 
-            // roll dice for atk territory; max 3 dice rolled if troops > 3
-            if (atkTroops > 3) {
-                for (int i = 0; i < 3; i++) {
+            // roll dice for atk territory; max 4 dice rolled if troops > 4
+            if (atkTroops > 4) {
+                for (int i = 0; i < 4; i++) {
+                    atkDice.add((int) ((Math.random() * 6)) + 1);
+                }
+
+            } else if (atkTroops == 4) {
+                for (int i = 0; i < 4; i++) {
                     atkDice.add((int) ((Math.random() * 6)) + 1);
                 }
 
             } else if (atkTroops == 3) {
+                for (int i = 0; i < 3; i++) {
+                    atkDice.add((int) ((Math.random() * 6)) + 1);
+                }
+
+            }  else if (atkTroops == 2) {
                 for (int i = 0; i < 2; i++) {
                     atkDice.add((int) ((Math.random() * 6)) + 1);
                 }
-
-            } else if (atkTroops == 2) {
-                for (int i = 0; i < 1; i++) {
-                    atkDice.add((int) ((Math.random() * 6)) + 1);
-                }
-
             }
 
             // roll dice for def territory; max 2 dice rolled
