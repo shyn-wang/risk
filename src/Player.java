@@ -69,6 +69,12 @@ public class Player {
         territoryCounterLabel.setText("territories: " + getTotalTerritories());
     }
 
+    public void highlightAllTerritories() {
+        for (Territory territory : territories) {
+            territory.colour = highlightColour;
+        }
+    }
+
     public void resetTerritoryColours() {
         for (Territory territory : territories) {
             territory.colour = defaultColour;
@@ -89,8 +95,8 @@ public class Player {
     public void highlightFortifyEligibleStartingTerritories() {
         for (Territory territory : territories) {
             for (Territory adjTerritory : territory.adjacentTerritories) {
-                if (adjTerritory.parent == territory.parent && territory.troops > 1) {
-                    territory.colour = territory.parent.highlightColour;
+                if (adjTerritory.parent == this && territory.troops > 1) {
+                    territory.colour = highlightColour;
                     break; // only one valid adjacent territory is required at minimum
                 }
             }

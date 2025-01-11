@@ -206,13 +206,11 @@ public class Main extends JFrame {
         // randomly assign territories to each player
         Collections.shuffle(allTerritories);
 
-        // ********************************** add players 3 & 4 once created ************************************
-
         for (Territory territory : allTerritories) {
             if (player1.territories.size() < allTerritories.size() / game.players.size()) { // evenly distribute territories
                 territory.parent = player1;
                 player1.territories.add(territory);
-                territory.colour = player1.defaultColour;
+                territory.colour = player1.highlightColour; // player 1 starts in draft = highlight territories
 
                 player1.deployedTroops++;
                 player1.undeployedTroops--;
@@ -247,7 +245,7 @@ public class Main extends JFrame {
                 if (leftOverAssignment == 1) {
                     territory.parent = player1;
                     player1.territories.add(territory);
-                    territory.colour = player1.defaultColour;
+                    territory.colour = player1.highlightColour;
 
                     player1.deployedTroops++;
                     player1.undeployedTroops--;
@@ -710,6 +708,7 @@ public class Main extends JFrame {
             if (game.getTurn().undeployedTroops == 0) {
                 game.draftStatus.setText("");
                 game.nextPhaseBtnContainer.setVisible(true);
+                game.getTurn().resetTerritoryColours();
 
             } else {
                 game.draftStatus.setText("select a territory");
@@ -781,7 +780,6 @@ public class Main extends JFrame {
 
         game.endTurnBtn.addActionListener(e -> {
             game.getTurn().resetTerritoryColours(); // reset if troops were never moved
-            repaint();
 
             game.phase = "draft";
             game.turnCounter++;
@@ -790,6 +788,10 @@ public class Main extends JFrame {
 
             game.fortifyPhaseInfo.setVisible(false);
             game.draftPhaseInfo.setVisible(true);
+
+            game.getTurn().highlightAllTerritories();
+
+            repaint();
 
             // update info panels for new player
             game.refreshDraftPhaseInfoPanel();
