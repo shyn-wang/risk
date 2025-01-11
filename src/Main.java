@@ -13,6 +13,7 @@ public class Main extends JFrame {
     Player player1 = new Player("player 1", Color.decode("#04D4F0"), Color.decode("#04ECF0"));
     Player player2 = new Player("player 2", Color.decode("#FA53A0"), Color.decode("#FF0BAC"));
     Player player3 = new Player("player 3", Color.decode("#57cc99"), Color.decode("#80ed99"));
+    Player player4 = new Player("player 4", Color.decode("#a663cc"), Color.decode("#c77dff"));
 
     // create territory objects
 
@@ -87,7 +88,7 @@ public class Main extends JFrame {
         JPanel contentPane = new JPanel(null);
 
         // add players to game
-        Collections.addAll(game.players, player1, player2, player3);
+        Collections.addAll(game.players, player1, player2, player3, player4);
 
         // set adjacent territories for each territory
 
@@ -232,6 +233,14 @@ public class Main extends JFrame {
                 player3.deployedTroops++;
                 player3.undeployedTroops--;
 
+            } else if (player4.territories.size() < allTerritories.size() / game.players.size()) {
+                territory.parent = player4;
+                player4.territories.add(territory);
+                territory.colour = player4.defaultColour;
+
+                player4.deployedTroops++;
+                player4.undeployedTroops--;
+
             } else { // leftover territories present; randomly assigned to players
                 int leftOverAssignment = (int) (Math.random() * game.players.size()) + 1;
 
@@ -258,6 +267,14 @@ public class Main extends JFrame {
 
                     player3.deployedTroops++;
                     player3.undeployedTroops--;
+
+                } else if (leftOverAssignment == 4) {
+                    territory.parent = player4;
+                    player4.territories.add(territory);
+                    territory.colour = player4.defaultColour;
+
+                    player4.deployedTroops++;
+                    player4.undeployedTroops--;
                 }
             }
         }
@@ -305,11 +322,14 @@ public class Main extends JFrame {
             }
         }
 
+        Image connections = new ImageIcon("src/images/continentConnections.png").getImage();
+
         // create panel for world map
         JPanel mapPanel = new JPanel(null) {
             @Override
             protected void paintComponent(Graphics g) { // called whenever gui is created/refreshed
                 super.paintComponent(g);
+                g.drawImage(connections, 0, 0, 1710, 980, this);
 
                 // render path2D shapes
                 try {
@@ -337,38 +357,13 @@ public class Main extends JFrame {
                         g2d.draw(territory.path2d);
                     }
 
-
-//                    // Get the dimensions of the panel
-//                    int width = 1920;
-//                    int height = 980;
-//
-//                    // Draw a grid with 20px spacing
-//                    g.setColor(Color.LIGHT_GRAY);
-//
-//                    for (int i = 0; i < width; i += 20) {
-//                        g.drawLine(i, 0, i, height); // Vertical lines
-//                    }
-//                    for (int i = 0; i < height; i += 20) {
-//                        g.drawLine(0, i, width, i); // Horizontal lines
-//                    }
-//
-//                    // Draw coordinate labels (x, y) at grid intersections
-//                    g.setColor(Color.RED);
-//                    g.setFont(new Font("Arial", Font.PLAIN, 10));
-//
-//                    for (int x = 0; x < width; x += 50) {
-//                        for (int y = 0; y < height; y += 50) {
-//                            g.drawString("(" + x + ", " + y + ")", x + 5, y + 15); // Display the coordinates
-//                        }
-//                    }
-
                 } catch (Exception e) {
                     System.err.println("Error parsing path data: " + e.getMessage());
                 }
             }
         };
 
-        mapPanel.setBounds(0, 0, 1920, 980);
+        mapPanel.setBounds(0, 0, 1710, 980);
 
         // create troop count labels
 
@@ -435,6 +430,7 @@ public class Main extends JFrame {
         infoPanel.add(player1.initializePanel(0, 0));
         infoPanel.add(player2.initializePanel(110, 0));
         infoPanel.add(player3.initializePanel(220, 0));
+        infoPanel.add(player4.initializePanel(330, 0));
 
         // create round info panel
         infoPanel.add(game.initializeRoundInfoPanel());
@@ -804,7 +800,7 @@ public class Main extends JFrame {
         // create gui
         setContentPane(contentPane);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(1708, 1070);
+        setSize(1710, 1070);
         setLocationRelativeTo(null);
         setResizable(false);
         setVisible(true);

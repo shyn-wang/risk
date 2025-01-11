@@ -252,25 +252,25 @@ public class Game {
                 continentBonuses += 5; // 5 troops for north america
             }
 
-//            if (Main.southAmerica.stream().allMatch(territory -> territory.parent == getTurn())) {
-//                continentBonuses += 2; // 2 troops for south america
-//            }
-//
-//            if (Main.europe.stream().allMatch(territory -> territory.parent == getTurn())) {
-//                continentBonuses += 5; // 5 troops for europe
-//            }
-//
-//            if (Main.africa.stream().allMatch(territory -> territory.parent == getTurn())) {
-//                continentBonuses += 3; // 3 troops for africa
-//            }
-//
-//            if (Main.asia.stream().allMatch(territory -> territory.parent == getTurn())) {
-//                continentBonuses += 7; // 7 troops for asia
-//            }
-//
-//            if (Main.oceania.stream().allMatch(territory -> territory.parent == getTurn())) {
-//                continentBonuses += 2; // 2 troops for oceania
-//            }
+            if (Main.southAmerica.stream().allMatch(territory -> territory.parent == getTurn())) {
+                continentBonuses += 2; // 2 troops for south america
+            }
+
+            if (Main.europe.stream().allMatch(territory -> territory.parent == getTurn())) {
+                continentBonuses += 5; // 5 troops for europe
+            }
+
+            if (Main.africa.stream().allMatch(territory -> territory.parent == getTurn())) {
+                continentBonuses += 3; // 3 troops for africa
+            }
+
+            if (Main.asia.stream().allMatch(territory -> territory.parent == getTurn())) {
+                continentBonuses += 7; // 7 troops for asia
+            }
+
+            if (Main.oceania.stream().allMatch(territory -> territory.parent == getTurn())) {
+                continentBonuses += 2; // 2 troops for oceania
+            }
 
             int totalTroopsGained = baseTroopsGained + continentBonuses;
 
@@ -360,6 +360,12 @@ public class Game {
             } else if (turnCounter == 3) {
                 if (players.get(2).inGame) {
                     return players.get(2);
+                } else {
+                    turnCounter++;
+                }
+            } else if (turnCounter == 4) {
+                if (players.get(3).inGame) {
+                    return players.get(3);
                 } else {
                     turnCounter++;
                 }
