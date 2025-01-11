@@ -56,6 +56,20 @@ public class Main extends JFrame {
     Territory india = new Territory("india", Util.getPath2d("india"), "asia");
     Territory southeastAsia = new Territory("southeast asia", Util.getPath2d("southeast asia"), "asia");
     Territory china = new Territory("china", Util.getPath2d("china"), "asia");
+    Territory mongolia = new Territory("mongolia", Util.getPath2d("mongolia"), "asia");
+    Territory irkutsk = new Territory("irkutsk", Util.getPath2d("irkutsk"), "asia");
+    Territory kamchatka = new Territory("kamchatka", Util.getPath2d("kamchatka"), "asia");
+    Territory yakutsk = new Territory("yakutsk", Util.getPath2d("yakutsk"), "asia");
+    Territory siberia = new Territory("siberia", Util.getPath2d("siberia"), "asia");
+    Territory ural = new Territory("ural", Util.getPath2d("ural"), "asia");
+    Territory japan = new Territory("japan", Util.getPath2d("japan"), "asia");
+
+    // oceania
+    Territory indonesia = new Territory("indonesia", Util.getPath2d("indonesia"), "oceania");
+    Territory newGuinea = new Territory("new guinea", Util.getPath2d("new guinea"), "oceania");
+    Territory westernAustralia = new Territory("western australia", Util.getPath2d("western australia"), "oceania");
+    Territory easternAustralia = new Territory("eastern australia", Util.getPath2d("eastern australia"), "oceania");
+
 
     // stores all territories
     ArrayList<Territory> allTerritories = new ArrayList<>();
@@ -80,7 +94,7 @@ public class Main extends JFrame {
         // north america
         Collections.addAll(nwt.adjacentTerritories, alaska, ontario, alberta, greenland);
         Collections.addAll(alberta.adjacentTerritories, alaska, ontario, nwt, westernUS);
-        Collections.addAll(alaska.adjacentTerritories, alberta, nwt); // **add kamchatka once implemented**
+        Collections.addAll(alaska.adjacentTerritories, alberta, nwt, kamchatka);
         Collections.addAll(ontario.adjacentTerritories, alberta, nwt, easternCanada, easternUS, westernUS, greenland);
         Collections.addAll(westernUS.adjacentTerritories, alberta, ontario, mexico, easternUS);
         Collections.addAll(mexico.adjacentTerritories, westernUS, easternUS, venezuela);
@@ -109,15 +123,27 @@ public class Main extends JFrame {
         Collections.addAll(scandinavia.adjacentTerritories, iceland, greatBritain, northernEurope, russia);
         Collections.addAll(northernEurope.adjacentTerritories, scandinavia, greatBritain, westernEurope, southernEurope, russia);
         Collections.addAll(southernEurope.adjacentTerritories, northernEurope, westernEurope, northAfrica, russia, egypt, middleEast);
-        Collections.addAll(russia.adjacentTerritories, scandinavia, northernEurope, southernEurope, afghanistan, middleEast); //
+        Collections.addAll(russia.adjacentTerritories, scandinavia, northernEurope, southernEurope, afghanistan, middleEast, ural);
 
         // asia
         Collections.addAll(middleEast.adjacentTerritories, russia, afghanistan, southernEurope, egypt, easternAfrica, india);
         Collections.addAll(india.adjacentTerritories, middleEast, afghanistan, china, southeastAsia);
-        Collections.addAll(afghanistan.adjacentTerritories, russia, middleEast, india, china); //
-        Collections.addAll(china.adjacentTerritories, afghanistan, india, southeastAsia); //
-        Collections.addAll(southeastAsia.adjacentTerritories, china, india); //
+        Collections.addAll(afghanistan.adjacentTerritories, russia, middleEast, india, china, ural);
+        Collections.addAll(china.adjacentTerritories, afghanistan, india, southeastAsia, mongolia, siberia, ural);
+        Collections.addAll(southeastAsia.adjacentTerritories, china, india, indonesia);
+        Collections.addAll(mongolia.adjacentTerritories, irkutsk, kamchatka, japan, china, siberia);
+        Collections.addAll(irkutsk.adjacentTerritories, mongolia, kamchatka, yakutsk, siberia);
+        Collections.addAll(kamchatka.adjacentTerritories, alaska, yakutsk, irkutsk, mongolia, japan);
+        Collections.addAll(yakutsk.adjacentTerritories, kamchatka, irkutsk, siberia);
+        Collections.addAll(siberia.adjacentTerritories, yakutsk, irkutsk, mongolia, china, ural);
+        Collections.addAll(ural.adjacentTerritories, russia, afghanistan, china, siberia);
+        Collections.addAll(japan.adjacentTerritories, kamchatka, mongolia);
 
+        // oceania
+        Collections.addAll(indonesia.adjacentTerritories, southeastAsia, newGuinea, westernAustralia);
+        Collections.addAll(newGuinea.adjacentTerritories, indonesia, westernAustralia, easternAustralia);
+        Collections.addAll(westernAustralia.adjacentTerritories, indonesia, newGuinea, easternAustralia);
+        Collections.addAll(easternAustralia.adjacentTerritories, westernAustralia, newGuinea);
 
 
         // add territories to allTerritories arraylist
@@ -162,6 +188,19 @@ public class Main extends JFrame {
         allTerritories.add(india);
         allTerritories.add(china);
         allTerritories.add(southeastAsia);
+        allTerritories.add(mongolia);
+        allTerritories.add(irkutsk);
+        allTerritories.add(kamchatka);
+        allTerritories.add(yakutsk);
+        allTerritories.add(siberia);
+        allTerritories.add(ural);
+        allTerritories.add(japan);
+
+        // oceania
+        allTerritories.add(indonesia);
+        allTerritories.add(newGuinea);
+        allTerritories.add(westernAustralia);
+        allTerritories.add(easternAustralia);
 
         // randomly assign territories to each player
         Collections.shuffle(allTerritories);
@@ -334,38 +373,58 @@ public class Main extends JFrame {
         // create troop count labels
 
         // north america
-        nwt.createLabel(mapPanel,250, 85);
-        alberta.createLabel(mapPanel, 235, 160);
-        alaska.createLabel(mapPanel, 123, 85);
-        ontario.createLabel(mapPanel, 320, 173);
-        easternCanada.createLabel(mapPanel, 405, 170);
-        greenland.createLabel(mapPanel, 485, 50);
-        westernUS.createLabel(mapPanel, 235, 250);
-        easternUS.createLabel(mapPanel, 333, 265);
-        mexico.createLabel(mapPanel, 255, 365);
+        nwt.createLabel(mapPanel,393, 125);
+        alberta.createLabel(mapPanel, 378, 200);
+        alaska.createLabel(mapPanel, 266, 125);
+        ontario.createLabel(mapPanel, 463, 213);
+        easternCanada.createLabel(mapPanel, 548, 210);
+        greenland.createLabel(mapPanel, 628, 90);
+        westernUS.createLabel(mapPanel, 378, 290);
+        easternUS.createLabel(mapPanel, 477, 305);
+        mexico.createLabel(mapPanel, 398, 405);
 
         // south america
-        venezuela.createLabel(mapPanel, 350, 427);
-        peru.createLabel(mapPanel, 340, 535);
-        argentina.createLabel(mapPanel, 360, 650);
-        brazil.createLabel(mapPanel, 440, 515);
+        venezuela.createLabel(mapPanel, 493, 467);
+        peru.createLabel(mapPanel, 483, 575);
+        argentina.createLabel(mapPanel, 503, 690);
+        brazil.createLabel(mapPanel, 583, 555);
 
         // africa
-        northAfrica.createLabel(mapPanel,630, 480);
-        egypt.createLabel(mapPanel, 730, 440);
-        easternAfrica.createLabel(mapPanel, 800, 540);
-        centralAfrica.createLabel(mapPanel, 730, 590);
-        southAfrica.createLabel(mapPanel, 740, 700);
-        madagascar.createLabel(mapPanel, 847, 700);
+        northAfrica.createLabel(mapPanel,778, 520);
+        egypt.createLabel(mapPanel, 878, 480);
+        easternAfrica.createLabel(mapPanel, 943, 580);
+        centralAfrica.createLabel(mapPanel, 878, 630);
+        southAfrica.createLabel(mapPanel, 883, 740);
+        madagascar.createLabel(mapPanel, 990, 740);
 
         // europe
-        iceland.createLabel(mapPanel, 585, 125);
-        greatBritain.createLabel(mapPanel, 572, 218);
-        westernEurope.createLabel(mapPanel, 580, 350);
-        southernEurope.createLabel(mapPanel, 692, 312);
-        northernEurope.createLabel(mapPanel, 682, 242);
-        scandinavia.createLabel(mapPanel, 672, 135);
-        russia.createLabel(mapPanel, 790, 200);
+        iceland.createLabel(mapPanel, 728, 165);
+        greatBritain.createLabel(mapPanel, 715, 258);
+        westernEurope.createLabel(mapPanel, 723, 390);
+        southernEurope.createLabel(mapPanel, 835, 352);
+        northernEurope.createLabel(mapPanel, 825, 282);
+        scandinavia.createLabel(mapPanel, 815, 175);
+        russia.createLabel(mapPanel, 933, 240);
+
+        // asia
+        middleEast.createLabel(mapPanel, 970, 450);
+        india.createLabel(mapPanel, 1115, 450);
+        afghanistan.createLabel(mapPanel, 1045, 320);
+        china.createLabel(mapPanel, 1205, 380);
+        southeastAsia.createLabel(mapPanel, 1215, 475);
+        mongolia.createLabel(mapPanel, 1225, 290);
+        irkutsk.createLabel(mapPanel, 1205, 210);
+        kamchatka.createLabel(mapPanel, 1320, 110);
+        yakutsk.createLabel(mapPanel, 1220, 110);
+        siberia.createLabel(mapPanel, 1125, 140);
+        ural.createLabel(mapPanel, 1055, 180);
+        japan.createLabel(mapPanel, 1350, 300);
+
+        // oceania
+        indonesia.createLabel(mapPanel, 1240, 600);
+        newGuinea.createLabel(mapPanel, 1345, 580);
+        westernAustralia.createLabel(mapPanel, 1290, 730);
+        easternAustralia.createLabel(mapPanel, 1395, 720);
 
         // create game info panel
         JPanel infoPanel = new JPanel(null);

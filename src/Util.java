@@ -56,8 +56,10 @@ public class Util {
         }
 
         AffineTransform scaleTransform = AffineTransform.getScaleInstance(0.7, 0.7);
+        AffineTransform translate = AffineTransform.getTranslateInstance(143, 40);
 
         path2D = (Path2D.Double) scaleTransform.createTransformedShape(path2D);
+        path2D.transform(translate);
 
         return path2D;
     }

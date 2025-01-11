@@ -104,7 +104,7 @@ public class Game {
         this.draftPhaseInfo.add(availableTroops);
 
         this.draftStatus = new JLabel("select a territory");
-        this.draftStatus.setBounds(250, 22, 180, 20);
+        this.draftStatus.setBounds(250, 22, 190, 20);
         this.draftStatus.setFont(new Font("Helvetica", Font.BOLD, 15));
         this.draftPhaseInfo.add(draftStatus);
 
@@ -139,12 +139,12 @@ public class Game {
         ));
 
         this.attackStatus = new JLabel("select a territory");
-        this.attackStatus.setBounds(30, 22, 200, 20);
+        this.attackStatus.setBounds(30, 22, 220, 20);
         this.attackStatus.setFont(new Font("Helvetica", Font.BOLD, 15));
         this.attackPhaseInfo.add(this.attackStatus);
 
         this.attackSelectedTerritories = new JLabel();
-        this.attackSelectedTerritories.setBounds(250, 22, 270, 20);
+        this.attackSelectedTerritories.setBounds(240, 22, 300, 20);
         this.attackSelectedTerritories.setFont(new Font("Helvetica", Font.BOLD, 15));
         this.attackPhaseInfo.add(this.attackSelectedTerritories);
 
@@ -357,7 +357,13 @@ public class Game {
                 } else {
                     turnCounter++;
                 }
-            } else {
+            } else if (turnCounter == 3) {
+                if (players.get(2).inGame) {
+                    return players.get(2);
+                } else {
+                    turnCounter++;
+                }
+            } else  {
                 turnCounter = 1;
                 round++;
             }
