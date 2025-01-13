@@ -58,6 +58,7 @@ public class Player {
     }
 
     public JPanel initializePanel(int x, int y) {
+        nameLabel.setText(name);
         deployedtroopCounterLabel.setText("active troops: " + this.deployedTroops);
         territoryCounterLabel.setText("territories: " + getTotalTerritories());
         statsPanel.setBounds(x, y, 110, 100);

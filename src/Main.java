@@ -1,4 +1,5 @@
 import javax.swing.*;
+import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
@@ -319,6 +320,181 @@ public class Main extends JFrame {
                     break;
             }
         }
+
+        // create welcome screen
+        JFrame frame = new JFrame();
+
+        JDialog dialog = new JDialog(frame, "welcome to risk", true); // modal = no other parts of the application can be accessed until the popup is responded to
+        dialog.setResizable(false);
+        dialog.setSize(600, 300);
+        dialog.setLocationRelativeTo(frame);
+
+        dialog.setLayout(new GridLayout(2, 1, 0, 15));
+
+        JPanel playerNames = new JPanel();
+        playerNames.setBorder(new EmptyBorder(20, 10, 10, 10));
+
+        JPanel bottomContainer = new JPanel();
+        bottomContainer.setLayout(new GridLayout(2, 1, 0, 5));
+
+        JLabel statusLabel = new JLabel("", JLabel.CENTER);
+        statusLabel.setFont(new Font("Helvetica", Font.PLAIN, 15));
+        bottomContainer.add(statusLabel);
+
+        JButton playButton = new JButton("play");
+        JPanel playBtnContainer = new JPanel();
+
+        playBtnContainer.add(playButton);
+        bottomContainer.add(playBtnContainer);
+
+        //
+
+        JPanel setPlayer1NamePanel = new JPanel();
+        setPlayer1NamePanel.setLayout(new GridLayout(3, 1, 0, 5));
+
+        JLabel player1Name = new JLabel("player 1", JLabel.CENTER);
+        player1Name.setFont(new Font("Helvetica", Font.BOLD, 15));
+        setPlayer1NamePanel.add(player1Name);
+
+        JTextField setplayer1Name = new JTextField("", 10);
+        setPlayer1NamePanel.add(setplayer1Name);
+
+        JButton setPlayer1NameBtn = new JButton("set name");
+        setPlayer1NamePanel.add(setPlayer1NameBtn);
+
+        setPlayer1NameBtn.addActionListener(e -> {
+            if (setplayer1Name.getText().length() < 8 && setplayer1Name.getText().length() > 0) {
+                if (!setplayer1Name.getText().equals(player2.name) && !setplayer1Name.getText().equals(player3.name) && !setplayer1Name.getText().equals(player4.name)) {
+                    player1.name = setplayer1Name.getText();
+                    player1Name.setText(player1.name);
+                    statusLabel.setText("");
+                } else {
+                    statusLabel.setText("invalid input");
+                }
+            } else {
+                statusLabel.setText("invalid input");
+            }
+        });
+
+        playerNames.add(setPlayer1NamePanel);
+
+        //
+
+        //
+
+        JPanel setPlayer2NamePanel = new JPanel();
+        setPlayer2NamePanel.setLayout(new GridLayout(3, 1, 0, 5));
+
+        JLabel player2Name = new JLabel("player 2", JLabel.CENTER);
+        player2Name.setFont(new Font("Helvetica", Font.BOLD, 15));
+        setPlayer2NamePanel.add(player2Name);
+
+        JTextField setplayer2Name = new JTextField("", 10);
+        setPlayer2NamePanel.add(setplayer2Name);
+
+        JButton setPlayer2NameBtn = new JButton("set name");
+        setPlayer2NamePanel.add(setPlayer2NameBtn);
+
+        setPlayer2NameBtn.addActionListener(e -> {
+            if (setplayer2Name.getText().length() < 8 && setplayer2Name.getText().length() > 0) {
+                if (!setplayer2Name.getText().equals(player1.name) && !setplayer2Name.getText().equals(player3.name) && !setplayer2Name.getText().equals(player4.name)) {
+                    player2.name = setplayer2Name.getText();
+                    player2Name.setText(player2.name);
+                    statusLabel.setText("");
+                } else {
+                    statusLabel.setText("invalid input");
+                }
+            } else {
+                statusLabel.setText("invalid input");
+            }
+        });
+
+        playerNames.add(setPlayer2NamePanel);
+
+        //
+
+        //
+
+        JPanel setPlayer3NamePanel = new JPanel();
+        setPlayer3NamePanel.setLayout(new GridLayout(3, 1, 0, 5));
+
+        JLabel player3Name = new JLabel("player 3", JLabel.CENTER);
+        player3Name.setFont(new Font("Helvetica", Font.BOLD, 15));
+        setPlayer3NamePanel.add(player3Name);
+
+        JTextField setplayer3Name = new JTextField("", 10);
+        setPlayer3NamePanel.add(setplayer3Name);
+
+        JButton setPlayer3NameBtn = new JButton("set name");
+        setPlayer3NamePanel.add(setPlayer3NameBtn);
+
+        setPlayer3NameBtn.addActionListener(e -> {
+            if (setplayer3Name.getText().length() < 8 && setplayer3Name.getText().length() > 0) {
+                if (!setplayer3Name.getText().equals(player1.name) && !setplayer3Name.getText().equals(player2.name) && !setplayer3Name.getText().equals(player4.name)) {
+                    player3.name = setplayer3Name.getText();
+                    player3Name.setText(player3.name);
+                    statusLabel.setText("");
+                } else {
+                    statusLabel.setText("invalid input");
+                }
+            } else {
+                statusLabel.setText("invalid input");
+            }
+        });
+
+        playerNames.add(setPlayer3NamePanel);
+
+        //
+
+        //
+
+        JPanel setPlayer4NamePanel = new JPanel();
+        setPlayer4NamePanel.setLayout(new GridLayout(3, 1, 0, 5));
+
+        JLabel player4Name = new JLabel("player 4", JLabel.CENTER);
+        player4Name.setFont(new Font("Helvetica", Font.BOLD, 15));
+        setPlayer4NamePanel.add(player4Name);
+
+        JTextField setplayer4Name = new JTextField("", 10);
+        setPlayer4NamePanel.add(setplayer4Name);
+
+        JButton setPlayer4NameBtn = new JButton("set name");
+        setPlayer4NamePanel.add(setPlayer4NameBtn);
+
+        setPlayer4NameBtn.addActionListener(e -> {
+            if (setplayer4Name.getText().length() < 8 && setplayer4Name.getText().length() > 0) {
+                if (!setplayer4Name.getText().equals(player1.name) && !setplayer4Name.getText().equals(player2.name) && !setplayer4Name.getText().equals(player3.name)) {
+                    player4.name = setplayer4Name.getText();
+                    player4Name.setText(player4.name);
+                    statusLabel.setText("");
+                } else {
+                    statusLabel.setText("invalid input");
+                }
+            } else {
+                statusLabel.setText("invalid input");
+            }
+        });
+
+        playerNames.add(setPlayer4NamePanel);
+
+        //
+
+
+        dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
+
+        playButton.addActionListener(e -> {
+            if (!player1.name.equals("player 1") && !player2.name.equals("player 2") && !player3.name.equals("player 3") && !player4.name.equals("player 4")) {
+                dialog.dispose();
+
+            } else {
+                statusLabel.setText("set all player names");
+            }
+        });
+
+        dialog.add(playerNames);
+        dialog.add(bottomContainer);
+
+        dialog.setVisible(true);
 
         Image connections = new ImageIcon("src/images/continentConnections.png").getImage();
 
