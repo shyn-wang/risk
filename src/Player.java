@@ -12,10 +12,15 @@ public class Player {
     int deployedTroops;
     int undeployedTroops;
     JPanel statsPanel;
-    JLabel nameLabel;
+    JLabel statsPanelNameLabel;
     JLabel deployedtroopCounterLabel;
     JLabel territoryCounterLabel;
     boolean inGame;
+
+    JPanel setNamePanel;
+    JLabel setNamePanelNameLabel;
+    JTextField setName;
+    JButton setNameBtn;
 
     public Player(String name, Color defaultColour, Color highlightColour) {
         this.name = name;
@@ -35,17 +40,30 @@ public class Player {
                 new EmptyBorder(10, 10, 0, 0) // padding
         ));
 
-        this.nameLabel = new JLabel(this.name);
-        this.nameLabel.setFont(new Font("Helvetica", Font.BOLD, 15));
-        this.statsPanel.add(nameLabel);
+        this.statsPanelNameLabel = new JLabel(this.name);
+        this.statsPanelNameLabel.setFont(new Font("Helvetica", Font.BOLD, 15));
+        this.statsPanel.add(this.statsPanelNameLabel);
 
         this.deployedtroopCounterLabel = new JLabel();
         this.deployedtroopCounterLabel.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        this.statsPanel.add(deployedtroopCounterLabel);
+        this.statsPanel.add(this.deployedtroopCounterLabel);
 
         this.territoryCounterLabel = new JLabel();
         this.territoryCounterLabel.setFont(new Font("Helvetica", Font.PLAIN, 12));
-        this.statsPanel.add(territoryCounterLabel);
+        this.statsPanel.add(this.territoryCounterLabel);
+
+        this.setNamePanel = new JPanel();
+        this.setNamePanel.setLayout(new GridLayout(3, 1, 0, 5));
+
+        this.setNamePanelNameLabel = new JLabel(this.name, JLabel.CENTER);
+        this.setNamePanelNameLabel.setFont(new Font("Helvetica", Font.BOLD, 15));
+        this.setNamePanel.add(this.setNamePanelNameLabel);
+
+        this.setName = new JTextField("", 10);
+        this.setNamePanel.add(this.setName);
+
+        this.setNameBtn = new JButton("set name");
+        this.setNamePanel.add(this.setNameBtn);
     }
 
 
@@ -57,8 +75,8 @@ public class Player {
         return territories.size();
     }
 
-    public JPanel initializePanel(int x, int y) {
-        nameLabel.setText(name);
+    public JPanel initializeStatsPanel(int x, int y) {
+        statsPanelNameLabel.setText(name);
         deployedtroopCounterLabel.setText("active troops: " + this.deployedTroops);
         territoryCounterLabel.setText("territories: " + getTotalTerritories());
         statsPanel.setBounds(x, y, 110, 100);

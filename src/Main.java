@@ -347,26 +347,15 @@ public class Main extends JFrame {
         playBtnContainer.add(playButton);
         bottomContainer.add(playBtnContainer);
 
-        //
+        playerNames.add(player1.setNamePanel);
+        player1.setNameBtn.addActionListener(e -> {
+            if (player1.setName.getText().length() < 8 && !player1.setName.getText().isEmpty()) {
+                // check if any other players have the same name
+                boolean nameTaken = game.players.stream().anyMatch(obj -> obj.name.equals(player1.setName.getText()));
 
-        JPanel setPlayer1NamePanel = new JPanel();
-        setPlayer1NamePanel.setLayout(new GridLayout(3, 1, 0, 5));
-
-        JLabel player1Name = new JLabel("player 1", JLabel.CENTER);
-        player1Name.setFont(new Font("Helvetica", Font.BOLD, 15));
-        setPlayer1NamePanel.add(player1Name);
-
-        JTextField setplayer1Name = new JTextField("", 10);
-        setPlayer1NamePanel.add(setplayer1Name);
-
-        JButton setPlayer1NameBtn = new JButton("set name");
-        setPlayer1NamePanel.add(setPlayer1NameBtn);
-
-        setPlayer1NameBtn.addActionListener(e -> {
-            if (setplayer1Name.getText().length() < 8 && setplayer1Name.getText().length() > 0) {
-                if (!setplayer1Name.getText().equals(player2.name) && !setplayer1Name.getText().equals(player3.name) && !setplayer1Name.getText().equals(player4.name)) {
-                    player1.name = setplayer1Name.getText();
-                    player1Name.setText(player1.name);
+                if (!nameTaken) {
+                    player1.name = player1.setName.getText();
+                    player1.setNamePanelNameLabel.setText(player1.name);
                     statusLabel.setText("");
                 } else {
                     statusLabel.setText("invalid input");
@@ -376,30 +365,15 @@ public class Main extends JFrame {
             }
         });
 
-        playerNames.add(setPlayer1NamePanel);
+        playerNames.add(player2.setNamePanel);
+        player2.setNameBtn.addActionListener(e -> {
+            if (player2.setName.getText().length() < 8 && !player2.setName.getText().isEmpty()) {
+                // check if any other players have the same name
+                boolean nameTaken = game.players.stream().anyMatch(obj -> obj.name.equals(player2.setName.getText()));
 
-        //
-
-        //
-
-        JPanel setPlayer2NamePanel = new JPanel();
-        setPlayer2NamePanel.setLayout(new GridLayout(3, 1, 0, 5));
-
-        JLabel player2Name = new JLabel("player 2", JLabel.CENTER);
-        player2Name.setFont(new Font("Helvetica", Font.BOLD, 15));
-        setPlayer2NamePanel.add(player2Name);
-
-        JTextField setplayer2Name = new JTextField("", 10);
-        setPlayer2NamePanel.add(setplayer2Name);
-
-        JButton setPlayer2NameBtn = new JButton("set name");
-        setPlayer2NamePanel.add(setPlayer2NameBtn);
-
-        setPlayer2NameBtn.addActionListener(e -> {
-            if (setplayer2Name.getText().length() < 8 && setplayer2Name.getText().length() > 0) {
-                if (!setplayer2Name.getText().equals(player1.name) && !setplayer2Name.getText().equals(player3.name) && !setplayer2Name.getText().equals(player4.name)) {
-                    player2.name = setplayer2Name.getText();
-                    player2Name.setText(player2.name);
+                if (!nameTaken) {
+                    player2.name = player2.setName.getText();
+                    player2.setNamePanelNameLabel.setText(player2.name);
                     statusLabel.setText("");
                 } else {
                     statusLabel.setText("invalid input");
@@ -409,30 +383,15 @@ public class Main extends JFrame {
             }
         });
 
-        playerNames.add(setPlayer2NamePanel);
+        playerNames.add(player3.setNamePanel);
+        player3.setNameBtn.addActionListener(e -> {
+            if (player3.setName.getText().length() < 8 && !player3.setName.getText().isEmpty()) {
+                // check if any other players have the same name
+                boolean nameTaken = game.players.stream().anyMatch(obj -> obj.name.equals(player3.setName.getText()));
 
-        //
-
-        //
-
-        JPanel setPlayer3NamePanel = new JPanel();
-        setPlayer3NamePanel.setLayout(new GridLayout(3, 1, 0, 5));
-
-        JLabel player3Name = new JLabel("player 3", JLabel.CENTER);
-        player3Name.setFont(new Font("Helvetica", Font.BOLD, 15));
-        setPlayer3NamePanel.add(player3Name);
-
-        JTextField setplayer3Name = new JTextField("", 10);
-        setPlayer3NamePanel.add(setplayer3Name);
-
-        JButton setPlayer3NameBtn = new JButton("set name");
-        setPlayer3NamePanel.add(setPlayer3NameBtn);
-
-        setPlayer3NameBtn.addActionListener(e -> {
-            if (setplayer3Name.getText().length() < 8 && setplayer3Name.getText().length() > 0) {
-                if (!setplayer3Name.getText().equals(player1.name) && !setplayer3Name.getText().equals(player2.name) && !setplayer3Name.getText().equals(player4.name)) {
-                    player3.name = setplayer3Name.getText();
-                    player3Name.setText(player3.name);
+                if (!nameTaken) {
+                    player3.name = player3.setName.getText();
+                    player3.setNamePanelNameLabel.setText(player3.name);
                     statusLabel.setText("");
                 } else {
                     statusLabel.setText("invalid input");
@@ -442,30 +401,15 @@ public class Main extends JFrame {
             }
         });
 
-        playerNames.add(setPlayer3NamePanel);
+        playerNames.add(player4.setNamePanel);
+        player4.setNameBtn.addActionListener(e -> {
+            if (player4.setName.getText().length() < 8 && !player4.setName.getText().isEmpty()) {
+                // check if any other players have the same name
+                boolean nameTaken = game.players.stream().anyMatch(obj -> obj.name.equals(player4.setName.getText()));
 
-        //
-
-        //
-
-        JPanel setPlayer4NamePanel = new JPanel();
-        setPlayer4NamePanel.setLayout(new GridLayout(3, 1, 0, 5));
-
-        JLabel player4Name = new JLabel("player 4", JLabel.CENTER);
-        player4Name.setFont(new Font("Helvetica", Font.BOLD, 15));
-        setPlayer4NamePanel.add(player4Name);
-
-        JTextField setplayer4Name = new JTextField("", 10);
-        setPlayer4NamePanel.add(setplayer4Name);
-
-        JButton setPlayer4NameBtn = new JButton("set name");
-        setPlayer4NamePanel.add(setPlayer4NameBtn);
-
-        setPlayer4NameBtn.addActionListener(e -> {
-            if (setplayer4Name.getText().length() < 8 && setplayer4Name.getText().length() > 0) {
-                if (!setplayer4Name.getText().equals(player1.name) && !setplayer4Name.getText().equals(player2.name) && !setplayer4Name.getText().equals(player3.name)) {
-                    player4.name = setplayer4Name.getText();
-                    player4Name.setText(player4.name);
+                if (!nameTaken) {
+                    player4.name = player4.setName.getText();
+                    player4.setNamePanelNameLabel.setText(player4.name);
                     statusLabel.setText("");
                 } else {
                     statusLabel.setText("invalid input");
@@ -474,11 +418,6 @@ public class Main extends JFrame {
                 statusLabel.setText("invalid input");
             }
         });
-
-        playerNames.add(setPlayer4NamePanel);
-
-        //
-
 
         dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 
@@ -493,17 +432,16 @@ public class Main extends JFrame {
 
         dialog.add(playerNames);
         dialog.add(bottomContainer);
-
         dialog.setVisible(true);
 
+        // create panel for world map
         Image connections = new ImageIcon("src/images/continentConnections.png").getImage();
 
-        // create panel for world map
         JPanel mapPanel = new JPanel(null) {
             @Override
             protected void paintComponent(Graphics g) { // called whenever gui is created/refreshed
                 super.paintComponent(g);
-                g.drawImage(connections, 0, 0, 1710, 980, this);
+                g.drawImage(connections, -1, 0, 1710, 980, this);
 
                 // render path2D shapes
                 try {
@@ -601,10 +539,10 @@ public class Main extends JFrame {
         infoPanel.setBounds(0, 980, 1920, 100);
 
         // create player stat panels
-        infoPanel.add(player1.initializePanel(0, 0));
-        infoPanel.add(player2.initializePanel(110, 0));
-        infoPanel.add(player3.initializePanel(220, 0));
-        infoPanel.add(player4.initializePanel(330, 0));
+        infoPanel.add(player1.initializeStatsPanel(0, 0));
+        infoPanel.add(player2.initializeStatsPanel(110, 0));
+        infoPanel.add(player3.initializeStatsPanel(220, 0));
+        infoPanel.add(player4.initializeStatsPanel(330, 0));
 
         // create round info panel
         infoPanel.add(game.initializeRoundInfoPanel());
