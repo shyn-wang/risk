@@ -424,7 +424,7 @@ public class Main extends JFrame {
         playButton.addActionListener(e -> {
             if (!player1.name.equals("player 1") && !player2.name.equals("player 2") && !player3.name.equals("player 3") && !player4.name.equals("player 4")) {
                 dialog.dispose();
-
+                Util.playSoundtrack();
             } else {
                 statusLabel.setText("set all player names");
             }

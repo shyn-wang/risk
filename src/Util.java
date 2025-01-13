@@ -11,6 +11,8 @@ import java.util.stream.Collectors;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import javax.sound.sampled.*;
+
 public class Util {
     // converts svg path to path2d shape/coordinates and scales down
     public static Path2D getPath2d(String territory) throws Exception {
@@ -81,5 +83,20 @@ public class Util {
                         item -> (String) item.get("id"),
                         item -> item
                 ));
+    }
+
+    public static void playSoundtrack() {
+        try {
+            File soundFile = new File("src/sounds/riskSoundtrack.wav");
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFile);
+
+            Clip clip = AudioSystem.getClip();
+            clip.open(audioInputStream);
+
+            clip.loop(Clip.LOOP_CONTINUOUSLY);
+
+        } catch (UnsupportedAudioFileException | IOException | LineUnavailableException e) {
+            e.printStackTrace();
+        }
     }
 }
