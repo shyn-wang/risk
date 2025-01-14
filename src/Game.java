@@ -272,13 +272,23 @@ public class Game {
                 continentBonuses += 2; // 2 troops for oceania
             }
 
-            int totalTroopsGained = baseTroopsGained + continentBonuses;
+            // roll for random bonus troops
+            int randomBonusTroops = 0;
+
+            if (round >= 3) {
+                if (Math.random() * getTurn().bonusTroopsProbability + 1 == 1) {
+                    randomBonusTroops += (int) (Math.random() * (15 - 7 + 1) + 7); // generates random troop count from 7-15
+                    getTurn().bonusTroopsProbability = 5; // reset probability back to 5 = 1 in 5 = 20%
+                }
+            }
+
+            int totalTroopsGained = baseTroopsGained + continentBonuses + randomBonusTroops;
 
             JFrame frame = new JFrame();
 
             JDialog dialog = new JDialog(frame, "troops gained", true); // modal = no other parts of the application can be accessed until the popup is responded to
             dialog.setResizable(false);
-            dialog.setSize(300, 250);
+            dialog.setSize(300, 270);
             dialog.setLocationRelativeTo(frame);
 
 
@@ -292,7 +302,7 @@ public class Game {
             doc.setParagraphAttributes(0, 0, center, false);
 
             playerReport.setSize(400, 175);
-            playerReport.setText("\n" + getTurn().name + " report\n\n" + getTurn().getTotalTerritories() + " territories occupied: " + baseTroopsGained + " troops\ncontinent bonuses: " + continentBonuses + " troops\ntotal troops gained: " + totalTroopsGained + " troops");
+            playerReport.setText("\n" + getTurn().name + " report\n\n" + getTurn().getTotalTerritories() + " territories occupied: " + baseTroopsGained + " troops\ncontinent bonuses: " + continentBonuses + " troops\nrandom bonus troops: " + randomBonusTroops + " troops\ntotal troops gained: " + totalTroopsGained + " troops");
             playerReport.setFont(new Font("Helvetica", Font.PLAIN, 15));
             playerReport.setOpaque(false);
             playerReport.setEditable(false);
@@ -458,6 +468,11 @@ public class Game {
                 break;
 
             } else if (defTroops == 0) { // attacker win
+                // increase probability for bonus troops
+                if (round >= 3 ) {
+                    getTurn().bonusTroopsProbability--; // each decrement increases probability by 20%
+                }
+
                 atkWinner = attackStartingTerritory;
                 attackStartingTerritory.updateTroops(atkTroopsLost * -1);
                 attackAttackingTerritory.updateTroops(defTroopsLost * -1);

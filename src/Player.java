@@ -22,6 +22,9 @@ public class Player {
     JTextField setName;
     JButton setNameBtn;
 
+    int bonusTroopsProbability = 5;
+
+
     public Player(String name, Color defaultColour, Color highlightColour) {
         this.name = name;
         this.defaultColour = defaultColour;
