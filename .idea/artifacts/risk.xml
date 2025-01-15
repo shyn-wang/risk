@@ -3,6 +3,10 @@
     <output-path>$PROJECT_DIR$/out/artifacts/risk</output-path>
     <root id="archive" name="risk.jar">
       <element id="module-output" name="WangRisk" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/jackson-annotations-2.18.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/jackson-databind-2.18.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/jackson-core-2.18.2.jar" path-in-jar="/" />
+      <element id="extracted-dir" path="$USER_HOME$/Downloads/flatlaf-3.5.4.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-all-1.18.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-anim-1.18.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-awt-util-1.18.jar" path-in-jar="/" />
@@ -31,9 +35,6 @@
       <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-util-1.18.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-xml-1.18.jar" path-in-jar="/" />
       <element id="extracted-dir" path="$USER_HOME$/Downloads/batik-1.18/lib/fop-transcoder-allinone-2.10.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$USER_HOME$/Downloads/jackson-annotations-2.18.2.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$USER_HOME$/Downloads/jackson-databind-2.18.2.jar" path-in-jar="/" />
-      <element id="extracted-dir" path="$USER_HOME$/Downloads/jackson-core-2.18.2.jar" path-in-jar="/" />
       <element id="file-copy" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-all-1.18.jar" />
       <element id="file-copy" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-anim-1.18.jar" />
       <element id="file-copy" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-awt-util-1.18.jar" />
@@ -62,10 +63,10 @@
       <element id="file-copy" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-util-1.18.jar" />
       <element id="file-copy" path="$USER_HOME$/Downloads/batik-1.18/lib/batik-xml-1.18.jar" />
       <element id="file-copy" path="$USER_HOME$/Downloads/batik-1.18/lib/fop-transcoder-allinone-2.10.jar" />
-      <element id="file-copy" path="$USER_HOME$/Downloads/jackson-annotations-2.18.2.jar" />
+      <element id="file-copy" path="$USER_HOME$/Downloads/flatlaf-3.5.4.jar" />
       <element id="file-copy" path="$USER_HOME$/Downloads/jackson-core-2.18.2.jar" />
       <element id="file-copy" path="$USER_HOME$/Downloads/jackson-databind-2.18.2.jar" />
-      <element id="dir-copy" path="$PROJECT_DIR$/resources" />
+      <element id="file-copy" path="$USER_HOME$/Downloads/jackson-annotations-2.18.2.jar" />
     </root>
   </artifact>
 </component>

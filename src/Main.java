@@ -4,10 +4,11 @@ import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.io.File;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+
+import com.formdev.flatlaf.themes.FlatMacLightLaf;
 
 public class Main extends JFrame {
     // create game object
@@ -922,10 +923,18 @@ public class Main extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1710, 1070);
         setLocationRelativeTo(null);
+        setResizable(true);
         setVisible(true);
     }
 
     public static void main(String[] args) throws Exception {
+        try {
+            UIManager.setLookAndFeel(new FlatMacLightLaf());
+
+        } catch (UnsupportedLookAndFeelException e) {
+            e.printStackTrace();
+        }
+
         new Main();
     }
 }
