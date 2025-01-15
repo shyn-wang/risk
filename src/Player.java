@@ -36,24 +36,32 @@ public class Player {
 
         this.statsPanel = new JPanel();
         BoxLayout layout = new BoxLayout(this.statsPanel, BoxLayout.Y_AXIS);
-        statsPanel.setLayout(layout);
-        statsPanel.setBackground(defaultColour);
+        this.statsPanel.setLayout(layout);
+        this.statsPanel.setBackground(defaultColour);
         this.statsPanel.setBorder(new CompoundBorder(
                 BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK), // top line
-                new EmptyBorder(10, 10, 0, 0) // padding
+                new EmptyBorder(0, 10, 0, 0) // padding
         ));
+
+        this.statsPanel.add(Box.createVerticalStrut(10));
 
         this.statsPanelNameLabel = new JLabel(this.name);
         this.statsPanelNameLabel.setFont(new Font("Helvetica", Font.BOLD, 15));
         this.statsPanel.add(this.statsPanelNameLabel);
 
+        this.statsPanel.add(Box.createVerticalStrut(0));
+
         this.deployedtroopCounterLabel = new JLabel();
         this.deployedtroopCounterLabel.setFont(new Font("Helvetica", Font.PLAIN, 12));
         this.statsPanel.add(this.deployedtroopCounterLabel);
 
+        this.statsPanel.add(Box.createVerticalStrut(0));
+
         this.territoryCounterLabel = new JLabel();
         this.territoryCounterLabel.setFont(new Font("Helvetica", Font.PLAIN, 12));
         this.statsPanel.add(this.territoryCounterLabel);
+
+        this.statsPanel.add(Box.createVerticalStrut(10));
 
         this.setNamePanel = new JPanel();
         this.setNamePanel.setLayout(new GridLayout(3, 1, 0, 5));
