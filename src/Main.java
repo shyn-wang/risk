@@ -208,11 +208,11 @@ public class Main extends JFrame {
         allTerritories.add(westernAustralia);
         allTerritories.add(easternAustralia);
 
-        // randomly assign territories to each player
+        // shuffle order of territories before assigning to players
         Collections.shuffle(allTerritories);
 
         for (Territory territory : allTerritories) {
-            if (player1.territories.size() < allTerritories.size() / game.players.size()) { // evenly distribute territories
+            if (player1.territories.size() < allTerritories.size() / game.players.size()) { // evenly distribute territories among players
                 territory.parent = player1;
                 player1.territories.add(territory);
                 territory.colour = player1.highlightColour; // player 1 starts in draft = highlight territories
@@ -244,8 +244,8 @@ public class Main extends JFrame {
                 player4.deployedTroops++;
                 player4.undeployedTroops--;
 
-            } else { // leftover territories present; randomly assigned to players
-                int leftOverAssignment = (int) (Math.random() * game.players.size()) + 1;
+            } else { // leftover territories that cannot be evenly divided among players present; randomly assigned to players
+                int leftOverAssignment = (int) (Math.random() * game.players.size()) + 1; // generate random number from 1-4 to determine which corresponding player receives territories
 
                 if (leftOverAssignment == 1) {
                     territory.parent = player1;
@@ -285,9 +285,9 @@ public class Main extends JFrame {
         // deploy troops to each player's territories
         for (Player player : game.players) {
             deployTroops:
-            while (player.undeployedTroops > 3) {
+            while (player.undeployedTroops > 3) { // each player deploys 27 troops
                 for (Territory territory : player.territories) {
-                    int roll = (int) (Math.random() * 6) + 1;
+                    int roll = (int) (Math.random() * 6) + 1; // rolls dice to determine if territory receives a troop; repeats until all troops are deployed = territories will have unequal # of troops
 
                     if (roll == 1) {
                         territory.updateTroops(1);
@@ -301,7 +301,7 @@ public class Main extends JFrame {
             }
         }
 
-        // add territories belonging to each continent to their respective arraylist
+        // add territories belonging to each continent to their respective arraylists
         for (Territory territory : allTerritories) {
             switch (territory.continent) {
                 case "north america":
@@ -335,10 +335,10 @@ public class Main extends JFrame {
 
         dialog.setLayout(new GridLayout(2, 1, 0, 15));
 
-        JPanel playerNames = new JPanel();
+        JPanel playerNames = new JPanel(); // contains four panels each containing required fields for a player to select their name
         playerNames.setBorder(new EmptyBorder(20, 10, 10, 10));
 
-        JPanel bottomContainer = new JPanel();
+        JPanel bottomContainer = new JPanel(); // contains status label and play btn
         bottomContainer.setLayout(new GridLayout(2, 1, 0, 5));
 
         JLabel statusLabel = new JLabel("", JLabel.CENTER);
@@ -351,13 +351,13 @@ public class Main extends JFrame {
         playBtnContainer.add(playButton);
         bottomContainer.add(playBtnContainer);
 
-        playerNames.add(player1.setNamePanel);
+        playerNames.add(player1.setNamePanel); // add player name panel
         player1.setNameBtn.addActionListener(e -> {
-            if (player1.setName.getText().length() < 8 && !player1.setName.getText().isEmpty()) {
+            if (player1.setName.getText().length() < 8 && !player1.setName.getText().isEmpty()) { // ensure length of name is valid
                 // check if any other players have the same name
                 boolean nameTaken = game.players.stream().anyMatch(obj -> obj.name.equals(player1.setName.getText()));
 
-                if (!nameTaken) {
+                if (!nameTaken) { // runs if name is original
                     player1.name = player1.setName.getText();
                     player1.setNamePanelNameLabel.setText(player1.name);
                     statusLabel.setText("");
@@ -423,9 +423,8 @@ public class Main extends JFrame {
             }
         });
 
-        dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
-
         playButton.addActionListener(e -> {
+            // ensures new names are selected; original placeholders are rejected
             if (!player1.name.equals("player 1") && !player2.name.equals("player 2") && !player3.name.equals("player 3") && !player4.name.equals("player 4")) {
                 dialog.dispose();
                 Util.playSoundtrack();
@@ -436,9 +435,13 @@ public class Main extends JFrame {
 
         dialog.add(playerNames);
         dialog.add(bottomContainer);
+
+        dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
         dialog.setVisible(true);
 
         // create panel for world map
+
+        // image contains dashes indicating points where troops can move between continents
         InputStream inputStream = getClass().getResourceAsStream("/continentConnections.png");
         Image connections = ImageIO.read(inputStream);
 
@@ -446,7 +449,7 @@ public class Main extends JFrame {
             @Override
             protected void paintComponent(Graphics g) { // called whenever gui is created/refreshed
                 super.paintComponent(g);
-                g.drawImage(connections, -1, 0, 1660, 930, this);
+                g.drawImage(connections, -1, 0, 1660, 930, this); // image set as background
 
                 // render path2D shapes
                 try {
@@ -456,9 +459,9 @@ public class Main extends JFrame {
                     g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
                     // create fillings
-                    g2d.setColor(Color.BLACK);
                     g2d.setStroke(new BasicStroke(2));
 
+                    // paints each territory based on specific colour and opacity indicated within object properties
                     for (Territory territory : allTerritories) {
                         g2d.setColor(territory.colour);
                         g2d.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, territory.opacity));
@@ -582,7 +585,7 @@ public class Main extends JFrame {
                     Player activePlayer = game.getTurn();
 
                     if (game.phase.equals("draft")) {
-                        if (game.getTurn().undeployedTroops > 0) {
+                        if (activePlayer.undeployedTroops > 0) { // undeployedTroops > = troops can be deployed
                             for (Territory territory : activePlayer.territories) {
                                 if (territory.path2d.contains(e.getPoint())) { // checks if click is on a territory owned by the current turn's player
                                     if (game.draftSelectedTerritory != null) { // checks if click is on owned territory when starting territory was already previously selected (when the player selects a different owned territory to start from); prevents bug where both territories have the click indicator if a territory stored at a later point in the arraylist containing the player's territories is selected after a territory that is stored at an earlier point
@@ -691,8 +694,8 @@ public class Main extends JFrame {
                                             game.fortifyFortifyingTerritory.opacity = 1.0F;
                                             game.fortifyFortifyingTerritory = null;
 
-                                            game.getTurn().resetTerritoryColours();
-                                            game.getTurn().highlightFortifyEligibleStartingTerritories();
+                                            activePlayer.resetTerritoryColours();
+                                            activePlayer.highlightFortifyEligibleStartingTerritories();
 
                                             game.fortifySelectedTerritories.setText(null);
                                             game.moveTroopsPanel.setVisible(false);
@@ -710,7 +713,7 @@ public class Main extends JFrame {
                                             game.findAllTerritoriesThatCanBeFortified();
 
                                             for (Territory fortTerritory : game.fortifyValidTerritories) { // highlight all territories that can be fortified
-                                                fortTerritory.colour = game.getTurn().highlightColour.brighter();
+                                                fortTerritory.colour = activePlayer.highlightColour.brighter();
                                             }
 
                                             repaint();
@@ -923,12 +926,12 @@ public class Main extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1660, 1020);
         setLocationRelativeTo(null);
-        setResizable(true);
+        setResizable(false);
         setVisible(true);
     }
 
     public static void main(String[] args) throws Exception {
-        // load look & feel before creating any swing elements
+        // apply look & feel before creating any swing elements
         try {
             UIManager.setLookAndFeel(new FlatMacLightLaf());
 

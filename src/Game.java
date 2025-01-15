@@ -58,7 +58,7 @@ public class Game {
 
     public Game() {
         this.turnCounter = 1;
-        this.players = new ArrayList<Player>();
+        this.players = new ArrayList<>();
         this.phase = "draft";
         this.draftSelectedTerritory = null;
         this.attackStartingTerritory = null;
