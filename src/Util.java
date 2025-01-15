@@ -4,8 +4,10 @@ import org.apache.batik.parser.PathParser;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -67,11 +69,10 @@ public class Util {
     }
 
     public static Map<String, HashMap<String, Object>> getPaths() throws IOException {
-        // Create an ObjectMapper instance
+        // create an ObjectMapper instance
         ObjectMapper objectMapper = new ObjectMapper();
 
-        // Read the JSON file and convert it to a List of HashMaps
-        File file = new File("src/paths.json");
+        InputStream file = Util.class.getResourceAsStream("/paths.json"); // grab json file containing paths using inputstream to support jar packaging
         List<HashMap<String, Object>> list = objectMapper.readValue(
                 file,
                 objectMapper.getTypeFactory().constructCollectionType(List.class, HashMap.class)
@@ -87,8 +88,9 @@ public class Util {
 
     public static void playSoundtrack() {
         try {
-            File soundFile = new File("src/sounds/riskSoundtrack.wav");
-            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(soundFile);
+            InputStream soundFile = Util.class.getResourceAsStream("/riskSoundtrack.wav");
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(soundFile);
+            AudioInputStream audioInputStream = AudioSystem.getAudioInputStream(bufferedInputStream);
 
             Clip clip = AudioSystem.getClip();
             clip.open(audioInputStream);

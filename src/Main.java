@@ -1,8 +1,11 @@
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 
@@ -435,7 +438,8 @@ public class Main extends JFrame {
         dialog.setVisible(true);
 
         // create panel for world map
-        Image connections = new ImageIcon("src/images/continentConnections.png").getImage();
+        InputStream inputStream = getClass().getResourceAsStream("/continentConnections.png");
+        Image connections = ImageIO.read(inputStream);
 
         JPanel mapPanel = new JPanel(null) {
             @Override
@@ -918,7 +922,6 @@ public class Main extends JFrame {
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(1710, 1070);
         setLocationRelativeTo(null);
-        setResizable(false);
         setVisible(true);
     }
 
