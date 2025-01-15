@@ -79,18 +79,18 @@ public class Game {
                 new EmptyBorder(0, -85, 0, 0) // padding
         ));
 
-        this.turnLabel = new JLabel();
+        this.turnLabel = new JLabel(); // displays current player
         this.turnLabel.setBounds(20, 22, 100, 20);
         this.turnLabel.setFont(new Font("Helvetica", Font.BOLD, 15));
         this.roundInfo.add(turnLabel);
 
-        this.phaseLabel = new JLabel();
+        this.phaseLabel = new JLabel(); // displays current phase
         this.phaseLabel.setBounds(160, 22, 100, 20);
         this.phaseLabel.setFont(new Font("Helvetica", Font.BOLD, 15));
         this.roundInfo.add(phaseLabel);
 
         // create draft phase info panel
-        this.draftPhaseInfo = new JPanel(null);
+        this.draftPhaseInfo = new JPanel(null); // contains info required for draft phase
         this.draftPhaseInfo.setBounds(755, 0, 955, 100);
         draftPhaseInfo.setVisible(true);
         this.draftPhaseInfo.setBorder(new CompoundBorder(
@@ -98,19 +98,19 @@ public class Game {
                 new EmptyBorder(0, -47, 0, 0) // padding
         ));
 
-        this.availableTroops = new JLabel();
+        this.availableTroops = new JLabel(); // displays # of troops that can be deployed
         this.availableTroops.setBounds(30, 22, 150, 20);
         this.availableTroops.setFont(new Font("Helvetica", Font.BOLD, 15));
         this.draftPhaseInfo.add(availableTroops);
 
-        this.draftStatus = new JLabel("select a territory");
-        this.draftStatus.setBounds(250, 22, 190, 20);
+        this.draftStatus = new JLabel("select a territory"); // displays selected territory
+        this.draftStatus.setBounds(220, 22, 190, 20);
         this.draftStatus.setFont(new Font("Helvetica", Font.BOLD, 15));
         this.draftPhaseInfo.add(draftStatus);
 
-        this.addTroopsPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
+        this.addTroopsPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0)); // contains troop # combobox + deploy btn
         this.addTroopsPanel.setOpaque(false);
-        this.addTroopsPanel.setBounds(495, 17, 200, 100);
+        this.addTroopsPanel.setBounds(465, 17, 200, 100);
         this.addTroopsPanel.setVisible(false);
         this.draftPhaseInfo.add(addTroopsPanel);
 
@@ -120,9 +120,9 @@ public class Game {
         this.addTroopsBtn = new JButton("add troops");
         this.addTroopsPanel.add(addTroopsBtn);
 
-        this.nextPhaseBtnContainer = new JPanel();
+        this.nextPhaseBtnContainer = new JPanel(); // contains nextPhaseBtn; switches to atk phase
         this.nextPhaseBtnContainer.setOpaque(false);
-        this.nextPhaseBtnContainer.setBounds(770, 12, 200, 100);
+        this.nextPhaseBtnContainer.setBounds(730, 12, 200, 100);
         this.nextPhaseBtnContainer.setVisible(false);
         this.draftPhaseInfo.add(nextPhaseBtnContainer);
 
@@ -130,7 +130,7 @@ public class Game {
         this.nextPhaseBtnContainer.add(nextPhaseBtn);
 
         // create attack phase info panel
-        this.attackPhaseInfo = new JPanel(null);
+        this.attackPhaseInfo = new JPanel(null); // contains info required for attack phase
         this.attackPhaseInfo.setBounds(755, 0, 955, 100);
         this.attackPhaseInfo.setVisible(false);
         this.attackPhaseInfo.setBorder(new CompoundBorder(
@@ -138,35 +138,35 @@ public class Game {
                 new EmptyBorder(22, -85, 0, 0) // padding
         ));
 
-        this.attackStatus = new JLabel("select a territory");
+        this.attackStatus = new JLabel("select a territory"); // displays 'select a territory to attack' once one territory is selected, then displays the owners of the two territories once the second is selected
         this.attackStatus.setBounds(30, 22, 220, 20);
         this.attackStatus.setFont(new Font("Helvetica", Font.BOLD, 15));
         this.attackPhaseInfo.add(this.attackStatus);
 
-        this.attackSelectedTerritories = new JLabel();
-        this.attackSelectedTerritories.setBounds(240, 22, 300, 20);
+        this.attackSelectedTerritories = new JLabel(); // displays the two territories and their player counts once both selected
+        this.attackSelectedTerritories.setBounds(220, 22, 300, 20);
         this.attackSelectedTerritories.setFont(new Font("Helvetica", Font.BOLD, 15));
         this.attackPhaseInfo.add(this.attackSelectedTerritories);
 
-        this.attackBtnContainer = new JPanel();
+        this.attackBtnContainer = new JPanel(); // contains attack btn
         this.attackBtnContainer.setOpaque(false);
-        this.attackBtnContainer.setBounds(540, 12, 200, 100);
+        this.attackBtnContainer.setBounds(520, 12, 200, 100);
         this.attackBtnContainer.setVisible(false);
         this.attackPhaseInfo.add(attackBtnContainer);
 
         this.attackBtn = new JButton("attack");
         this.attackBtnContainer.add(attackBtn);
 
-        this.endAttackBtnContainer = new JPanel();
+        this.endAttackBtnContainer = new JPanel(); // contains end attack btn
         this.endAttackBtnContainer.setOpaque(false);
-        this.endAttackBtnContainer.setBounds(770, 12, 200, 100);
+        this.endAttackBtnContainer.setBounds(730, 12, 200, 100);
         this.attackPhaseInfo.add(endAttackBtnContainer);
 
         this.endAttackBtn = new JButton("end attack");
         this.endAttackBtnContainer.add(endAttackBtn);
 
         // create fortify phase info panel
-        this.fortifyPhaseInfo = new JPanel(null);
+        this.fortifyPhaseInfo = new JPanel(null); // contains info required for fortify phase
         this.fortifyPhaseInfo.setBounds(755, 0, 955, 100);
         this.fortifyPhaseInfo.setVisible(false);
         this.fortifyPhaseInfo.setBorder(new CompoundBorder(
@@ -174,19 +174,19 @@ public class Game {
                 new EmptyBorder(22, -85, 0, 0) // padding
         ));
 
-        this.fortifyStatus = new JLabel("select a territory");
+        this.fortifyStatus = new JLabel("select a territory"); // displays 'select a territory to fortify' once starting territory is selected, displays 'fortify in progress' when ending territory is selected, displays 'fortify complete' once troops have been moved
         this.fortifyStatus.setBounds(30, 22, 200, 20);
         this.fortifyStatus.setFont(new Font("Helvetica", Font.BOLD, 15));
         this.fortifyPhaseInfo.add(this.fortifyStatus);
 
-        this.fortifySelectedTerritories = new JLabel();
-        this.fortifySelectedTerritories.setBounds(262, 22, 250, 20);
+        this.fortifySelectedTerritories = new JLabel(); // displays starting and ending territories once selected
+        this.fortifySelectedTerritories.setBounds(242, 22, 250, 20);
         this.fortifySelectedTerritories.setFont(new Font("Helvetica", Font.BOLD, 15));
         this.fortifyPhaseInfo.add(this.fortifySelectedTerritories);
 
-        this.moveTroopsPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0));
+        this.moveTroopsPanel = new JPanel(new FlowLayout(FlowLayout.LEADING, 0, 0)); // contains moveTroops combobox & moveTroopsBtn
         this.moveTroopsPanel.setOpaque(false);
-        this.moveTroopsPanel.setBounds(550, 17, 200, 100);
+        this.moveTroopsPanel.setBounds(530, 17, 200, 100);
         this.moveTroopsPanel.setVisible(false);
         this.fortifyPhaseInfo.add(moveTroopsPanel);
 
@@ -196,9 +196,9 @@ public class Game {
         this.moveTroopsBtn = new JButton("move troops");
         this.moveTroopsPanel.add(moveTroopsBtn);
 
-        this.endTurnBtnContainer = new JPanel();
+        this.endTurnBtnContainer = new JPanel(); // contains end turn btn
         this.endTurnBtnContainer.setOpaque(false);
-        this.endTurnBtnContainer.setBounds(770, 12, 200, 100);
+        this.endTurnBtnContainer.setBounds(740, 12, 200, 100);
         this.fortifyPhaseInfo.add(endTurnBtnContainer);
 
         this.endTurnBtn = new JButton("end turn");
@@ -288,7 +288,7 @@ public class Game {
 
             JDialog dialog = new JDialog(frame, "troops gained", true); // modal = no other parts of the application can be accessed until the popup is responded to
             dialog.setResizable(false);
-            dialog.setSize(300, 270);
+            dialog.setSize(300, 290);
             dialog.setLocationRelativeTo(frame);
 
 
@@ -301,7 +301,7 @@ public class Game {
             StyledDocument doc = playerReport.getStyledDocument();
             doc.setParagraphAttributes(0, 0, center, false);
 
-            playerReport.setSize(400, 175);
+            playerReport.setSize(400, 195);
             playerReport.setText("\n" + getTurn().name + " report\n\n" + getTurn().getTotalTerritories() + " territories occupied: " + baseTroopsGained + " troops\ncontinent bonuses: " + continentBonuses + " troops\nrandom bonus troops: " + randomBonusTroops + " troops\ntotal troops gained: " + totalTroopsGained + " troops");
             playerReport.setFont(new Font("Helvetica", Font.PLAIN, 15));
             playerReport.setOpaque(false);
@@ -412,7 +412,7 @@ public class Game {
 
                 JDialog dialog = new JDialog(frame, "attack failed", true); // modal = no other parts of the application can be accessed until the popup is responded to
                 dialog.setResizable(false);
-                dialog.setSize(300, 250);
+                dialog.setSize(300, 270);
                 dialog.setLocationRelativeTo(frame);
 
 
@@ -425,7 +425,7 @@ public class Game {
                 StyledDocument doc = battleReport.getStyledDocument();
                 doc.setParagraphAttributes(0, 0, center, false);
 
-                battleReport.setSize(400, 175);
+                battleReport.setSize(400, 200);
                 battleReport.setText("\n" + attackStartingTerritory.name + " -> " + attackAttackingTerritory.name + "\n\nstarting troops: " + (attackStartingTerritory.troops + atkTroopsLost) + "\ntroops lost: " + atkTroopsLost + "\nremaining troops: " + attackStartingTerritory.troops);
                 battleReport.setFont(new Font("Helvetica", Font.PLAIN, 15));
                 battleReport.setOpaque(false);
@@ -489,7 +489,7 @@ public class Game {
 
                 JDialog dialog = new JDialog(frame, "attack successful", true); // modal = no other parts of the application can be accessed until the popup is responded to
                 dialog.setResizable(false);
-                dialog.setSize(300, 250);
+                dialog.setSize(300, 270);
                 dialog.setLocationRelativeTo(frame);
 
 
@@ -502,7 +502,7 @@ public class Game {
                 StyledDocument doc = battleReport.getStyledDocument();
                 doc.setParagraphAttributes(0, 0, center, false);
 
-                battleReport.setSize(400, 175);
+                battleReport.setSize(400, 200);
                 battleReport.setText("\n" + attackStartingTerritory.name + " -> " + attackAttackingTerritory.name + "\n\nstarting troops: " + (attackStartingTerritory.troops + atkTroopsLost) + "\ntroops lost: " + atkTroopsLost + "\nremaining troops: " + attackStartingTerritory.troops);
                 battleReport.setFont(new Font("Helvetica", Font.PLAIN, 15));
                 battleReport.setOpaque(false);

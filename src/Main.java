@@ -446,7 +446,7 @@ public class Main extends JFrame {
             @Override
             protected void paintComponent(Graphics g) { // called whenever gui is created/refreshed
                 super.paintComponent(g);
-                g.drawImage(connections, -1, 0, 1710, 980, this);
+                g.drawImage(connections, -1, 0, 1660, 930, this);
 
                 // render path2D shapes
                 try {
@@ -480,7 +480,7 @@ public class Main extends JFrame {
             }
         };
 
-        mapPanel.setBounds(0, 0, 1710, 980);
+        mapPanel.setBounds(0, 0, 1660, 930);
 
         // create troop count labels
 
@@ -541,7 +541,7 @@ public class Main extends JFrame {
         // create game info panel
         JPanel infoPanel = new JPanel(null);
         infoPanel.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK));
-        infoPanel.setBounds(0, 980, 1920, 100);
+        infoPanel.setBounds(0, 930, 1660, 70);
 
         // create player stat panels
         infoPanel.add(player1.initializeStatsPanel(0, 0));
@@ -921,13 +921,14 @@ public class Main extends JFrame {
         // create gui
         setContentPane(contentPane);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(1710, 1070);
+        setSize(1660, 1020);
         setLocationRelativeTo(null);
         setResizable(true);
         setVisible(true);
     }
 
     public static void main(String[] args) throws Exception {
+        // load look & feel before creating any swing elements
         try {
             UIManager.setLookAndFeel(new FlatMacLightLaf());
 
