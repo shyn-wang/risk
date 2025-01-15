@@ -483,7 +483,7 @@ public class Main extends JFrame {
             }
         };
 
-        mapPanel.setBounds(0, 0, 1660, 930);
+        mapPanel.setBounds(0, 0, 1660, 920);
 
         // create troop count labels
 
@@ -544,7 +544,7 @@ public class Main extends JFrame {
         // create game info panel
         JPanel infoPanel = new JPanel(null);
         infoPanel.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK));
-        infoPanel.setBounds(0, 930, 1660, 70);
+        infoPanel.setBounds(0, 920, 1660, 60);
 
         // create player stat panels
         infoPanel.add(player1.initializeStatsPanel(0, 0));
@@ -923,10 +923,11 @@ public class Main extends JFrame {
 
         // create gui
         setContentPane(contentPane);
+        contentPane.setPreferredSize(new Dimension(1660, 980));
+        pack();
         setDefaultCloseOperation(EXIT_ON_CLOSE);
-        setSize(1660, 1020);
         setLocationRelativeTo(null);
-        setResizable(false);
+        setResizable(true);
         setVisible(true);
     }
 
