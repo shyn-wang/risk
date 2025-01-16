@@ -16,20 +16,23 @@ public class Game {
     int round;
 
     Territory draftSelectedTerritory;
+
     Territory attackStartingTerritory;
     Territory attackAttackingTerritory;
-    Territory fortifyStartingTerritory;
-    Territory fortifyFortifyingTerritory;
-
     Territory atkWinner;
     int atkTroopsLost;
     int defTroopsLost;
 
+    Territory fortifyStartingTerritory;
+    Territory fortifyFortifyingTerritory;
     ArrayList<Territory> fortifyValidTerritories;
 
+    // info panel
     JPanel roundInfo;
     JLabel turnLabel;
     JLabel phaseLabel;
+
+    // draft phase info panel
     JPanel draftPhaseInfo;
     JLabel availableTroops;
     JLabel draftStatus;
@@ -39,6 +42,7 @@ public class Game {
     JPanel nextPhaseBtnContainer;
     JButton nextPhaseBtn;
 
+    // attack phase info panel
     JPanel attackPhaseInfo;
     JLabel attackStatus;
     JLabel attackSelectedTerritories;
@@ -47,6 +51,7 @@ public class Game {
     JPanel endAttackBtnContainer;
     JButton endAttackBtn;
 
+    // fortify phase info panel
     JPanel fortifyPhaseInfo;
     JLabel fortifyStatus;
     JLabel fortifySelectedTerritories;
@@ -57,9 +62,9 @@ public class Game {
     JButton endTurnBtn;
 
     public Game() {
-        this.turnCounter = 1;
+        this.turnCounter = 1; // game will always start on player 1
         this.players = new ArrayList<>();
-        this.phase = "draft";
+        this.phase = "draft"; // game will always start on draft phase
         this.draftSelectedTerritory = null;
         this.attackStartingTerritory = null;
         this.attackAttackingTerritory = null;
@@ -206,6 +211,11 @@ public class Game {
 
     }
 
+    /*
+    description: initializes round info panel to display current player and phase
+    pre-condition: called by Main during game initialization
+    post-condition: returns roundInfo panel to Main
+    */
     public JPanel initializeRoundInfoPanel() {
         roundInfo.setBackground(getTurn().defaultColour);
         turnLabel.setText("turn: " + getTurn().name);
@@ -214,12 +224,22 @@ public class Game {
         return roundInfo;
     }
 
+    /*
+    description: updates round info panel to display current player and phase
+    pre-condition: called by nextPhaseBtn, endAttackBtn, and endTurnBtn
+    post-condition: updates labels and background colour
+    */
     public void updateRoundInfoPanel() {
         roundInfo.setBackground(getTurn().defaultColour);
         turnLabel.setText("turn: " + getTurn().name);
         phaseLabel.setText("phase: " + phase);
     }
 
+    /*
+    description: initializes draft info panel information
+    pre-condition: called by Main during game initialization
+    post-condition: returns draftPhaseInfo panel to Main
+    */
     public JPanel initializeDraftPhaseInfoPanel() {
         draftPhaseInfo.setBackground(getTurn().defaultColour);
         availableTroops.setText("available troops: " + getTurn().undeployedTroops);
@@ -231,13 +251,18 @@ public class Game {
         return draftPhaseInfo;
     }
 
+    /*
+    description: updates draft info panel and calculates + displays gained troops after each round
+    pre-condition: called by endTurnBtn
+    post-condition: updates troop counts and player indicator
+    */
     public void refreshDraftPhaseInfoPanel() {
         draftPhaseInfo.setBackground(getTurn().defaultColour);
 
         draftStatus.setText("select a territory");
         nextPhaseBtnContainer.setVisible(false);
 
-        // create added troops popup
+        // create added troops popup starting after first round
         if (round > 1) {
             int baseTroopsGained = (getTurn().getTotalTerritories() / 3);
 
@@ -272,11 +297,11 @@ public class Game {
                 continentBonuses += 2; // 2 troops for oceania
             }
 
-            // roll for random bonus troops
+            // roll for random bonus troops starting from round 3
             int randomBonusTroops = 0;
 
             if (round >= 3) {
-                if (Math.random() * getTurn().bonusTroopsProbability + 1 == 1) {
+                if ((int) (Math.random() * getTurn().bonusTroopsProbability + 1) == 1) {
                     randomBonusTroops += (int) (Math.random() * (15 - 7 + 1) + 7); // generates random troop count from 7-15
                     getTurn().bonusTroopsProbability = 5; // reset probability back to 5 = 1 in 5 = 20%
                 }
@@ -288,9 +313,8 @@ public class Game {
 
             JDialog dialog = new JDialog(frame, "troops gained", true); // modal = no other parts of the application can be accessed until the popup is responded to
             dialog.setResizable(false);
-            dialog.setSize(300, 290);
+            dialog.setSize(300, 295);
             dialog.setLocationRelativeTo(frame);
-
 
             dialog.setLayout(new GridLayout(2, 1, 0, 15));
 
@@ -301,7 +325,7 @@ public class Game {
             StyledDocument doc = playerReport.getStyledDocument();
             doc.setParagraphAttributes(0, 0, center, false);
 
-            playerReport.setSize(400, 195);
+            playerReport.setSize(400, 200);
             playerReport.setText("\n" + getTurn().name + " report\n\n" + getTurn().getTotalTerritories() + " territories occupied: " + baseTroopsGained + " troops\ncontinent bonuses: " + continentBonuses + " troops\nrandom bonus troops: " + randomBonusTroops + " troops\ntotal troops gained: " + totalTroopsGained + " troops");
             playerReport.setFont(new Font("Helvetica", Font.PLAIN, 15));
             playerReport.setOpaque(false);
@@ -333,26 +357,51 @@ public class Game {
         }
     }
 
+    /*
+    description: initializes attack phase info panel
+    pre-condition: called by Main during game initialization
+    post-condition: returns attackPhaseInfo panel to Main
+    */
     public JPanel initializeAttackPhaseInfoPanel() {
         attackPhaseInfo.setBackground(getTurn().defaultColour);
 
         return attackPhaseInfo;
     }
 
+    /*
+    description: updates attack phase info panel
+    pre-condition: called by endTurnBtn
+    post-condition: updates background colour to correspond to current player
+    */
     public void refreshAttackPhaseInfoPanel() {
         attackPhaseInfo.setBackground(getTurn().defaultColour);
     }
 
+    /*
+    description: initializes fortify phase info panel
+    pre-condition: called by Main during game initialization
+    post-condition: returns fortifyPhaseInfo panel to Main
+    */
     public JPanel initializeFortifyPhaseInfoPanel() {
         fortifyPhaseInfo.setBackground(getTurn().defaultColour);
 
         return fortifyPhaseInfo;
     }
 
+    /*
+    description: updates fortify phase info panel
+    pre-condition: called by endTurnBtn
+    post-condition: updates background colour to correspond to current player
+    */
     public void refreshFortifyPhaseInfoPanel() {
         fortifyPhaseInfo.setBackground(getTurn().defaultColour);
     }
 
+    /*
+    description: determines current active player based on turnCounter and which players have or have not been eliminated
+    pre-condition: called by Game and Main when the current active player is required
+    post-condition: returns current active player to caller in Game or Main
+    */
     public Player getTurn() {
         while (true) {
             if (turnCounter == 1) {
@@ -379,13 +428,18 @@ public class Game {
                 } else {
                     turnCounter++;
                 }
-            } else  {
+            } else  { // resets turnCounter to 1 (player 1) if > 4 (incremented when active player is player 4)
                 turnCounter = 1;
-                round++;
+                round++; // new round is started once all players have had their turns
             }
         }
     }
 
+    /*
+    description: determines the winning and losing territory during an attack, and the # of troops each side loses
+    pre-condition: called by attackBtn
+    post-condition: updates winning and losing territory properties + ownership, displays results in popup gui
+    */
     public void simulateBattle() {
         int atkTroops = attackStartingTerritory.troops;
         int defTroops = attackAttackingTerritory.troops;
@@ -401,10 +455,53 @@ public class Game {
             atkDice.clear();
             defDice.clear();
 
+            // roll dice for atk territory; max 4 dice rolled if troops > 4
+            if (atkTroops > 4) {
+                for (int i = 0; i < 4; i++) {
+                    atkDice.add((int) ((Math.random() * 6)) + 1);
+                }
+
+            } else if (atkTroops == 4) { // 3 dice rolled if troops == 4
+                for (int i = 0; i < 4; i++) {
+                    atkDice.add((int) ((Math.random() * 6)) + 1);
+                }
+
+            } else if (atkTroops == 3) { // 2 dice rolled if troops == 3
+                for (int i = 0; i < 3; i++) {
+                    atkDice.add((int) ((Math.random() * 6)) + 1);
+                }
+
+            }  else if (atkTroops == 2) { // 1 dice rolled if troops == 2
+                for (int i = 0; i < 2; i++) {
+                    atkDice.add((int) ((Math.random() * 6)) + 1);
+                }
+            }
+
+            // roll dice for def territory; max 2 dice rolled when troops >= 2
+            if (defTroops >= 2) {
+                for (int i = 0; i < 2; i++) {
+                    defDice.add((int) ((Math.random() * 6)) + 1);
+                }
+
+            } else if (defTroops == 1) { // 1 dice rolled when troops == 1
+                for (int i = 0; i < 1; i++) {
+                    defDice.add((int) ((Math.random() * 6)) + 1);
+                }
+            }
+
+            // determine winner of round
+            if (Collections.max(atkDice) > Collections.max(defDice)) { // highest dice roll on atk side is compared to highest dice roll on def side; winner = highest roll, dice are continuously rerolled and compared until either side no longer has enough troops to continue
+                defTroops--;
+                defTroopsLost++;
+            } else {
+                atkTroops--;
+                atkTroopsLost++;
+            }
+
             // check for winner
             if (atkTroops == 1) { // attacker loss
-                atkWinner = attackAttackingTerritory;
-                attackStartingTerritory.updateTroops(atkTroopsLost * -1);
+                atkWinner = attackAttackingTerritory; // def territory wins
+                attackStartingTerritory.updateTroops(atkTroopsLost * -1); // update territory troop counts
                 attackAttackingTerritory.updateTroops(defTroopsLost * -1);
 
                 // create battle report popup gui
@@ -412,7 +509,7 @@ public class Game {
 
                 JDialog dialog = new JDialog(frame, "attack failed", true); // modal = no other parts of the application can be accessed until the popup is responded to
                 dialog.setResizable(false);
-                dialog.setSize(300, 270);
+                dialog.setSize(300, 290);
                 dialog.setLocationRelativeTo(frame);
 
 
@@ -425,7 +522,7 @@ public class Game {
                 StyledDocument doc = battleReport.getStyledDocument();
                 doc.setParagraphAttributes(0, 0, center, false);
 
-                battleReport.setSize(400, 200);
+                battleReport.setSize(400, 220);
                 battleReport.setText("\n" + attackStartingTerritory.name + " -> " + attackAttackingTerritory.name + "\n\nstarting troops: " + (attackStartingTerritory.troops + atkTroopsLost) + "\ntroops lost: " + atkTroopsLost + "\nremaining troops: " + attackStartingTerritory.troops);
                 battleReport.setFont(new Font("Helvetica", Font.PLAIN, 15));
                 battleReport.setOpaque(false);
@@ -436,15 +533,14 @@ public class Game {
 
                 dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 
-                confirmButton.addActionListener(e -> {
-                    attackStartingTerritory.opacity = 1.0F;
+                confirmButton.addActionListener(e -> { // reset attacking and defending territory properties
+                    attackStartingTerritory.opacity = 1.0F; // remove click indicators
                     attackAttackingTerritory.opacity = 1.0F;
 
-                    // next three calls must be performed for starting territory parent; unlike during a win, the parent of the attacking territory never changes to that of the starting territory
-                    attackStartingTerritory.removeAdjEnemyTerritoryHighlights();
+                    attackStartingTerritory.removeAdjEnemyTerritoryHighlights(); // remove highlights of other enemy territories that were eligible for attack from the starting territory
 
-                    attackStartingTerritory.parent.resetTerritoryColours();
-                    attackStartingTerritory.parent.highlightAtkEligibleTerritories(); // must be called after troop counters are updated
+                    attackStartingTerritory.parent.resetTerritoryColours(); // removes highlight from starting territory since troops = 1 = ineligible for launching attacks
+                    attackStartingTerritory.parent.highlightAtkEligibleTerritories(); // highlight updated territories that are eligible for launching attacks
 
                     attackStartingTerritory = null;
                     attackAttackingTerritory = null;
@@ -468,13 +564,13 @@ public class Game {
                 break;
 
             } else if (defTroops == 0) { // attacker win
-                // increase probability for bonus troops
+                // increase probability for bonus troops; occurs in each round past round 3 where a player successfully captures an enemy territory
                 if (round >= 3 ) {
-                    getTurn().bonusTroopsProbability--; // each decrement increases probability by 20%
+                    getTurn().bonusTroopsProbability--; // each decrement increases probability exponentially; 5 (base) = 20%, 4 = 25%, 3 = 33%, 2 = 50%, 1 = 100%
                 }
 
-                atkWinner = attackStartingTerritory;
-                attackStartingTerritory.updateTroops(atkTroopsLost * -1);
+                atkWinner = attackStartingTerritory; // atk territory wins
+                attackStartingTerritory.updateTroops(atkTroopsLost * -1); // update territory troop counts
                 attackAttackingTerritory.updateTroops(defTroopsLost * -1);
 
                 // create battle report popup gui
@@ -483,13 +579,13 @@ public class Game {
                 JComboBox<String> moveTroopsSelector = new JComboBox<>();
                 moveTroopsSelector.addItem("select number of troops to move");
 
-                for (int i = 1; i <= attackStartingTerritory.troops - 1; i++) {
+                for (int i = 1; i <= attackStartingTerritory.troops - 1; i++) { // at least 1 troop must remain in starting territory
                     moveTroopsSelector.addItem(String.valueOf(i));
                 }
 
                 JDialog dialog = new JDialog(frame, "attack successful", true); // modal = no other parts of the application can be accessed until the popup is responded to
                 dialog.setResizable(false);
-                dialog.setSize(300, 270);
+                dialog.setSize(300, 290);
                 dialog.setLocationRelativeTo(frame);
 
 
@@ -502,7 +598,7 @@ public class Game {
                 StyledDocument doc = battleReport.getStyledDocument();
                 doc.setParagraphAttributes(0, 0, center, false);
 
-                battleReport.setSize(400, 200);
+                battleReport.setSize(400, 220);
                 battleReport.setText("\n" + attackStartingTerritory.name + " -> " + attackAttackingTerritory.name + "\n\nstarting troops: " + (attackStartingTerritory.troops + atkTroopsLost) + "\ntroops lost: " + atkTroopsLost + "\nremaining troops: " + attackStartingTerritory.troops);
                 battleReport.setFont(new Font("Helvetica", Font.PLAIN, 15));
                 battleReport.setOpaque(false);
@@ -513,34 +609,34 @@ public class Game {
 
                 dialog.setDefaultCloseOperation(JDialog.DO_NOTHING_ON_CLOSE);
 
-                confirmButton.addActionListener(e -> {
+                confirmButton.addActionListener(e -> { // resets selected territories & updates troop counts + player ownership
                     if (!moveTroopsSelector.getSelectedItem().toString().equals("select number of troops to move")) {
                         int moveTroops = Integer.parseInt(moveTroopsSelector.getSelectedItem().toString());
 
-                        attackStartingTerritory.parent.territories.add(attackAttackingTerritory);
+                        attackStartingTerritory.parent.territories.add(attackAttackingTerritory); // add captured territory to winner's territory arraylist
                         attackStartingTerritory.parent.updateLabels();
 
-                        attackAttackingTerritory.parent.territories.remove(attackAttackingTerritory);
+                        attackAttackingTerritory.parent.territories.remove(attackAttackingTerritory); // remove captured territory from loser's territory arraylist
                         attackAttackingTerritory.parent.updateLabels();
 
-                        // check if captured territory parent is eliminated
+                        // check if captured territory parent is eliminated (owns 0 territories)
                         if (attackAttackingTerritory.parent.territories.isEmpty()) {
                             attackAttackingTerritory.parent.inGame = false;
                             attackAttackingTerritory.parent.deployedtroopCounterLabel.setText("eliminated");
                             attackAttackingTerritory.parent.territoryCounterLabel.setText("");
                         }
 
-                        attackStartingTerritory.opacity = 1.0F;
+                        attackStartingTerritory.opacity = 1.0F; // remove click indicators
                         attackAttackingTerritory.opacity = 1.0F;
-                        attackAttackingTerritory.parent = attackStartingTerritory.parent; // ********************** captured territory parent changes to attacking territory parent *************
+                        attackAttackingTerritory.parent = attackStartingTerritory.parent; // captured territory parent changes to attacking territory parent
 
-                        attackStartingTerritory.updateTroops(moveTroops * -1);
+                        attackStartingTerritory.updateTroops(moveTroops * -1); // update troop counts of starting and captured territory once troops are moved
                         attackAttackingTerritory.updateTroops(moveTroops);
 
-                        attackStartingTerritory.removeAdjEnemyTerritoryHighlights();
+                        attackStartingTerritory.removeAdjEnemyTerritoryHighlights(); // removes highlights from other adjacent territories that were eligible for attack from the starting territory
 
-                        attackAttackingTerritory.parent.resetTerritoryColours();
-                        attackAttackingTerritory.parent.highlightAtkEligibleTerritories(); // must be called after troop counters are updated
+                        attackAttackingTerritory.parent.resetTerritoryColours(); // removes highlight effect from starting territory; required in cases where all troops except 1 are moved to the captured territory or starting territory has no more enemy adjacent territories = no longer eligible for attacks
+                        attackAttackingTerritory.parent.highlightAtkEligibleTerritories();
 
                         attackStartingTerritory = null;
                         attackAttackingTerritory = null;
@@ -565,52 +661,14 @@ public class Game {
 
                 break;
             }
-
-            // roll dice for atk territory; max 4 dice rolled if troops > 4
-            if (atkTroops > 4) {
-                for (int i = 0; i < 4; i++) {
-                    atkDice.add((int) ((Math.random() * 6)) + 1);
-                }
-
-            } else if (atkTroops == 4) {
-                for (int i = 0; i < 4; i++) {
-                    atkDice.add((int) ((Math.random() * 6)) + 1);
-                }
-
-            } else if (atkTroops == 3) {
-                for (int i = 0; i < 3; i++) {
-                    atkDice.add((int) ((Math.random() * 6)) + 1);
-                }
-
-            }  else if (atkTroops == 2) {
-                for (int i = 0; i < 2; i++) {
-                    atkDice.add((int) ((Math.random() * 6)) + 1);
-                }
-            }
-
-            // roll dice for def territory; max 2 dice rolled
-            if (defTroops >= 2) {
-                for (int i = 0; i < 2; i++) {
-                    defDice.add((int) ((Math.random() * 6)) + 1);
-                }
-
-            } else if (defTroops == 1) {
-                for (int i = 0; i < 1; i++) {
-                    defDice.add((int) ((Math.random() * 6)) + 1);
-                }
-            }
-
-            // determine winner of round
-            if (Collections.max(atkDice) > Collections.max(defDice)) { // highest dice roll on atk side is compared to highest dice roll on def side; winner = highest roll, dice are continuously rerolled and compared until either side loses all troops
-                defTroops--;
-                defTroopsLost++;
-            } else {
-                atkTroops--;
-                atkTroopsLost++;
-            }
         }
     }
 
+    /*
+    description: scans for winner by checking if only one active player is left in the game = game over
+    pre-condition: called by attackBtn
+    post-condition: creates popup gui displaying winner if game is over
+    */
     public void checkForWinner() {
         // check if only one player is in game = current player wins
         if (players.stream().filter(player -> player.inGame).count() == 1) {
@@ -619,9 +677,8 @@ public class Game {
 
             JDialog dialog = new JDialog(frame, "game over", true); // modal = no other parts of the application can be accessed until the popup is responded to
             dialog.setResizable(false);
-            dialog.setSize(300, 140);
+            dialog.setSize(300, 230);
             dialog.setLocationRelativeTo(frame);
-
 
             dialog.setLayout(new GridLayout(1, 1, 0, 15));
 
@@ -632,7 +689,7 @@ public class Game {
             StyledDocument doc = gameReport.getStyledDocument();
             doc.setParagraphAttributes(0, 0, center, false);
 
-            gameReport.setSize(400, 175);
+            gameReport.setSize(250, 205);
             gameReport.setText("\n" + getTurn().name + " wins " + "\n\ntotal territories: " + getTurn().getTotalTerritories() + "\ntotal troops: " + getTurn().getTotalTroops());
             gameReport.setFont(new Font("Helvetica", Font.PLAIN, 15));
             gameReport.setOpaque(false);
@@ -647,11 +704,16 @@ public class Game {
         }
     }
 
+    /*
+    description: continuously loops through the owned adjacent territories of each owned adjacent territory starting from the starting territory until all player owned territories connected to the starting territory are found
+    pre-condition: called by Main when a starting territory is selected during the fortify phase
+    post-condition: sets fortifyValidTerritories to an arraylist containing all connected territories from a given starting territory owned by the same player
+    */
     public void findAllTerritoriesThatCanBeFortified() {
-        ArrayList<Territory> uncheckedAdjTerritories = new ArrayList<>(fortifyStartingTerritory.adjacentTerritories); // ************** arraylists are reference types; uncheckedAdjTerritories must be given a copy, otherwise changes made to it will also affect the original
-        ArrayList<Territory> stagingArea = new ArrayList<>();
-        ArrayList<Territory> checkedTerritories = new ArrayList<>();
-        HashSet<Territory> duplicateRemover = new HashSet<>();
+        ArrayList<Territory> uncheckedAdjTerritories = new ArrayList<>(fortifyStartingTerritory.adjacentTerritories); // set to starting territory's adjacent territories; updated to only contain territories that have not been checked
+        ArrayList<Territory> stagingArea = new ArrayList<>(); // stores valid territories from uncheckedAdjTerritories before adding the unchecked adjacent territories (compared against territories in checkedTerritories) of each territory to duplicateRemover
+        ArrayList<Territory> checkedTerritories = new ArrayList<>(); // stores territories that have already been checked and cannot be readded to unchecked territories; checked territories cannot be added by stagingArea back into uncheckedTerritories
+        HashSet<Territory> duplicateRemover = new HashSet<>(); // stores single copies of each unchecked adj territory of all territories within stagingArea before adding them into uncheckedAdjTerritories
 
         searchAlgorithm: // algorithm determines if click is on a territory that is connected to the starting territory either directly or through other territories owned by the player; troops can only be moved to territories that have a path to the starting territory that is comprised of player owned territories
         while (true) {
@@ -660,16 +722,16 @@ public class Game {
             // loop through all adjacent territories (initially for the starting territory's adjacent territories, then for the adjacent territories of the adjacent territories, etc.)
             for (int i = 0; i < uncheckedAdjTerritories.size(); i++) {
                 if (uncheckedAdjTerritories.get(i).parent.equals(fortifyStartingTerritory.parent)) { // checks for player owned territories
-                    stagingArea.add(uncheckedAdjTerritories.get(i));
+                    stagingArea.add(uncheckedAdjTerritories.get(i)); // adds all valid territories to stagingArea arraylist; represents all territories that may have unchecked adjacent territories
                     checkedTerritories.add(uncheckedAdjTerritories.get(i));
                 }
             }
 
-            if (!stagingArea.isEmpty()) { // not empty = more possible paths to the clicked territory that are unchecked
+            if (!stagingArea.isEmpty()) { // not empty = more possible paths from the clicked territory that are unchecked
                 uncheckedAdjTerritories.clear();
                 duplicateRemover.clear();
 
-                // find all adjacent territories of territories in staging area and add to a hashset (does not allow duplicates to be added; territories may share the same adjacent territories)
+                // find all unchecked adjacent territories of territories in staging area and add to a hashset (does not allow duplicates to be added; territories may share the same adjacent territories)
                 for (int i = 0; i < stagingArea.size(); i++) {
                     for (int j = 0; j < stagingArea.get(i).adjacentTerritories.size(); j++) {
                         if (!checkedTerritories.contains(stagingArea.get(i).adjacentTerritories.get(j))) { // prevents infinite loop; territories that adjacent territories branch off from are not re-added
@@ -680,7 +742,7 @@ public class Game {
 
                 uncheckedAdjTerritories.addAll(duplicateRemover);
 
-            } else { // no more paths exist
+            } else { // no more paths exist = all paths found
                 fortifyValidTerritories = checkedTerritories;
                 break searchAlgorithm;
             }

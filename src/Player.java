@@ -1,6 +1,4 @@
 import javax.swing.*;
-import javax.swing.border.CompoundBorder;
-import javax.swing.border.EmptyBorder;
 import java.awt.*;
 import java.util.ArrayList;
 
@@ -34,58 +32,63 @@ public class Player {
         this.undeployedTroops = 30;
         this.inGame = true;
 
-        this.statsPanel = new JPanel();
-        BoxLayout layout = new BoxLayout(this.statsPanel, BoxLayout.Y_AXIS);
-        this.statsPanel.setLayout(layout);
+        this.statsPanel = new JPanel(null); // create stats panel containing player info
         this.statsPanel.setBackground(defaultColour);
-        this.statsPanel.setBorder(new CompoundBorder(
-                BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK), // top line
-                new EmptyBorder(0, 10, 0, 0) // padding
-        ));
+        this.statsPanel.setBorder(BorderFactory.createMatteBorder(2, 0, 0, 0, Color.BLACK)); // top line
 
-        this.statsPanel.add(Box.createVerticalStrut(10));
-
-        this.statsPanelNameLabel = new JLabel(this.name);
+        this.statsPanelNameLabel = new JLabel(this.name); // displays player name
         this.statsPanelNameLabel.setFont(new Font("Helvetica", Font.BOLD, 15));
+        this.statsPanelNameLabel.setBounds(10, 12, 90, 17);
         this.statsPanel.add(this.statsPanelNameLabel);
 
-        this.statsPanel.add(Box.createVerticalStrut(0));
-
-        this.deployedtroopCounterLabel = new JLabel();
+        this.deployedtroopCounterLabel = new JLabel(); // displays # of deployed troops
         this.deployedtroopCounterLabel.setFont(new Font("Helvetica", Font.PLAIN, 12));
+        this.deployedtroopCounterLabel.setBounds(9, 29, 100, 12);
         this.statsPanel.add(this.deployedtroopCounterLabel);
 
-        this.statsPanel.add(Box.createVerticalStrut(0));
-
-        this.territoryCounterLabel = new JLabel();
+        this.territoryCounterLabel = new JLabel(); // displays # of owned territories
         this.territoryCounterLabel.setFont(new Font("Helvetica", Font.PLAIN, 12));
+        this.territoryCounterLabel.setBounds(10, 41, 90, 12);
         this.statsPanel.add(this.territoryCounterLabel);
 
-        this.statsPanel.add(Box.createVerticalStrut(10));
-
+        // create panel for setting name
         this.setNamePanel = new JPanel();
         this.setNamePanel.setLayout(new GridLayout(3, 1, 0, 5));
 
-        this.setNamePanelNameLabel = new JLabel(this.name, JLabel.CENTER);
+        this.setNamePanelNameLabel = new JLabel(this.name, JLabel.CENTER); // displays chosen name
         this.setNamePanelNameLabel.setFont(new Font("Helvetica", Font.BOLD, 15));
         this.setNamePanel.add(this.setNamePanelNameLabel);
 
-        this.setName = new JTextField("", 10);
+        this.setName = new JTextField("", 10); // enables chosen name to be entered
         this.setNamePanel.add(this.setName);
 
-        this.setNameBtn = new JButton("set name");
+        this.setNameBtn = new JButton("set name"); // confirms chosen name
         this.setNamePanel.add(this.setNameBtn);
     }
 
-
+    /*
+    description: calculates the total (undeployed and deployed) troops owned
+    pre-condition: called by checkForWinner() in Game
+    post-condition: returns int value corresponding to total troops to checkForWinner()
+    */
     public int getTotalTroops() {
         return deployedTroops + undeployedTroops;
     }
 
+    /*
+    description: calculates total # of territories owned
+    pre-condition: called when the total territory count of a player is required by Player and Game
+    post-condition: returns int value corresponding to the size of the territories arraylist to caller in Player or Game
+    */
     public int getTotalTerritories() {
         return territories.size();
     }
 
+    /*
+    description: sets position of and initializes stats panel
+    pre-condition: called by Main during game initialization; requires two int values corresponding to the desired x and y coordinates of the panel
+    post-condition: returns initialized statsPanel to Main
+    */
     public JPanel initializeStatsPanel(int x, int y) {
         statsPanelNameLabel.setText(name);
         deployedtroopCounterLabel.setText("active troops: " + this.deployedTroops);
@@ -94,23 +97,43 @@ public class Player {
         return statsPanel;
     }
 
+    /*
+    description: updates stat panel labels
+    pre-condition: called by simulateBattle() in Game
+    post-condition: updates values of labels based on current info
+    */
     public void updateLabels() {
         deployedtroopCounterLabel.setText("active troops: " + deployedTroops);
         territoryCounterLabel.setText("territories: " + getTotalTerritories());
     }
 
+    /*
+    description: highlights all owned territories
+    pre-condition: called by endTurnBtn
+    post-condition: sets the colour of each owned territory to the player's highlight colour
+    */
     public void highlightAllTerritories() {
         for (Territory territory : territories) {
             territory.colour = highlightColour;
         }
     }
 
+    /*
+    description: resets colour of all owned territories
+    pre-condition: called by Game and Main
+    post-condition: sets the colour of each owned territory to the player's default colour
+    */
     public void resetTerritoryColours() {
         for (Territory territory : territories) {
             territory.colour = defaultColour;
         }
     }
 
+    /*
+    description: highlights all territories eligible for launching an attack
+    pre-condition: called by Game and Main during attack phase
+    post-condition: sets the colour of each owned territory with at least 1 adjacent territory owned by a different player and > 1 troops to the player's highlight colour
+    */
     public void highlightAtkEligibleTerritories() {
         for (Territory territory : territories) {
             for (Territory adjTerritory : territory.adjacentTerritories) {
@@ -122,6 +145,11 @@ public class Player {
         }
     }
 
+    /*
+    description: highlights all territories eligible for fortifying another territory
+    pre-condition: called by Main during fortify phase
+    post-condition: sets the colour of each owned territory with at least 1 adjacent territory owned by the same player and > 1 troops to the player's highlight colour
+    */
     public void highlightFortifyEligibleStartingTerritories() {
         for (Territory territory : territories) {
             for (Territory adjTerritory : territory.adjacentTerritories) {

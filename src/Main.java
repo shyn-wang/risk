@@ -287,7 +287,7 @@ public class Main extends JFrame {
             deployTroops:
             while (player.undeployedTroops > 3) { // each player deploys 27 troops
                 for (Territory territory : player.territories) {
-                    int roll = (int) (Math.random() * 6) + 1; // rolls dice to determine if territory receives a troop; repeats until all troops are deployed = territories will have unequal # of troops
+                    int roll = (int) (Math.random() * 6) + 1; // rolls dice to determine if each territory receives a troop; repeats until all troops are deployed = territories will have unequal # of troops
 
                     if (roll == 1) {
                         territory.updateTroops(1);
@@ -325,7 +325,7 @@ public class Main extends JFrame {
             }
         }
 
-        // create welcome screen
+        // create welcome screen popup
         JFrame frame = new JFrame();
 
         JDialog dialog = new JDialog(frame, "welcome to risk", true); // modal = no other parts of the application can be accessed until the popup is responded to
@@ -616,28 +616,25 @@ public class Main extends JFrame {
                                     }
                                 }
 
-                                if (game.attackStartingTerritory != null) { // check if click is on different owned territory when starting territory was already previously selected; selecting new owned territory to start from (territories are reset)
+                                if (game.attackStartingTerritory != null) { // not null = starting territory already chosen; check if click is on different owned territory when starting territory was already previously selected; selecting new owned territory to start from (territories are reset)
                                     if (validSelection && territory.troops >= 2) {
                                         game.attackStartingTerritory.removeAdjEnemyTerritoryHighlights();
 
                                         game.attackStartingTerritory.opacity = 1.0F;
-                                        game.attackStartingTerritory = null;
+                                        game.attackStartingTerritory = null; // remove selected starting territory; new starting territory is being chosen
 
-                                        if (game.attackAttackingTerritory != null) {
+                                        if (game.attackAttackingTerritory != null) { // runs if another player owned territory is clicked on when both the starting and attacking territories have been selected
                                             game.attackAttackingTerritory.opacity = 1.0F;
-                                            game.attackAttackingTerritory = null;
+                                            game.attackAttackingTerritory = null; // remove selected attacking territory; new starting territory is being chosen
 
                                             game.attackSelectedTerritories.setText(null);
                                             game.attackBtnContainer.setVisible(false);
                                         }
-
-                                        game.attackStatus.setText("select a territory");
-                                        game.endAttackBtnContainer.setVisible(true);
                                     }
                                 }
 
-                                if (validSelection && territory.troops >= 2) {
-                                    game.attackStartingTerritory = territory; // select owned territory to start from
+                                if (validSelection && territory.troops >= 2) { // select owned territory to start from
+                                    game.attackStartingTerritory = territory; // set starting territory to selected territory
 
                                     territory.opacity = 0.3F;
                                     territory.highlightAdjEnemyTerritories();
@@ -650,21 +647,21 @@ public class Main extends JFrame {
                             }
                         }
 
-                        if (!ownedTerritorySelected) {
-                            if (game.attackStartingTerritory != null) { // only runs when starting territory is already selected to check if click is on an adjacent enemy territory
+                        if (!ownedTerritorySelected) { // click was not registered on a player owned territory
+                            if (game.attackStartingTerritory != null) { // only runs when starting territory is already selected to check if click is on an adjacent enemy territory; no response will be triggered if starting territory has not been selected
                                 for (Territory adjTerritory : game.attackStartingTerritory.adjacentTerritories) {
                                     if (adjTerritory.parent != game.attackStartingTerritory.parent) { // checks if territory selected is adjacent to the starting territory and owned by another player
                                         if (adjTerritory.path2d.contains(e.getPoint())) {
-                                            if (game.attackAttackingTerritory != null) { // checks if a territory to attack was already previously chosen; resets its state (occurs when player selects a different territory to attack)
+                                            if (game.attackAttackingTerritory != null) { // checks if a territory to attack was already previously chosen; resets its state (occurs when player selects a different territory to attack from the same starting territory)
                                                 game.attackAttackingTerritory.opacity = 1.0F;
                                             }
 
-                                            game.attackAttackingTerritory = adjTerritory;
+                                            game.attackAttackingTerritory = adjTerritory; // set attacking territory
                                             game.attackStatus.setText(game.attackStartingTerritory.parent.name + " vs " + game.attackAttackingTerritory.parent.name);
                                             game.attackSelectedTerritories.setText(game.attackStartingTerritory.name + ": " + game.attackStartingTerritory.troops + "   |   " + game.attackAttackingTerritory.name + ": " + game.attackAttackingTerritory.troops);
                                             game.attackBtnContainer.setVisible(true);
 
-                                            adjTerritory.opacity = 0.3F;
+                                            adjTerritory.opacity = 0.3F; // add highlight effect
                                             repaint();
                                         }
                                     }
@@ -675,7 +672,7 @@ public class Main extends JFrame {
                     } else if (game.phase.equals("fortify")) {
                         if (!game.fortifyStatus.getText().equals("fortify complete")) { // checks if fortification already occurred; only one move is allowed per turn
                             for (Territory territory : activePlayer.territories) { // checks if click is on an owned territory
-                                if (territory.path2d.contains(e.getPoint())) {
+                                if (territory.path2d.contains(e.getPoint())) { // finds owned territory clicked
                                     boolean validSelection = false;
 
                                     for (Territory adjTerritory : territory.adjacentTerritories) {
@@ -687,7 +684,7 @@ public class Main extends JFrame {
 
                                     // resets states if a different territory is selected while both the starting and fortifying territory were previously selected
                                     if (game.fortifyStartingTerritory != null && game.fortifyFortifyingTerritory != null) {
-                                        if (validSelection && territory.troops >= 2) {
+                                        if (validSelection && territory.troops >= 2) { // only resets states if different territory selected is a valid starting territory, following if statement will set territory as starting territory
                                             game.fortifyStartingTerritory.opacity = 1.0F;
                                             game.fortifyStartingTerritory = null;
 
@@ -705,14 +702,14 @@ public class Main extends JFrame {
                                         }
                                     }
 
-                                    if (game.fortifyStartingTerritory == null) { // checks if starting territory is chosen (yes = second territory must be selected, no = starting territory must be selected)
+                                    if (game.fortifyStartingTerritory == null) { // checks if starting territory is chosen (yes = second territory must be selected, no = starting territory is selected)
                                         if (validSelection && territory.troops >= 2) {
                                             game.fortifyStartingTerritory = territory; // select owned territory to start from
                                             territory.opacity = 0.3F;
 
-                                            game.findAllTerritoriesThatCanBeFortified();
+                                            game.findAllTerritoriesThatCanBeFortified(); // identifies all player owned territories connected to the starting territory by other player owned territories
 
-                                            for (Territory fortTerritory : game.fortifyValidTerritories) { // highlight all territories that can be fortified
+                                            for (Territory fortTerritory : game.fortifyValidTerritories) { // highlight all valid territories that can be fortified
                                                 fortTerritory.colour = activePlayer.highlightColour.brighter();
                                             }
 
@@ -725,12 +722,12 @@ public class Main extends JFrame {
                                     } else if (game.fortifyFortifyingTerritory == null && territory != game.fortifyStartingTerritory) { // choose territory to fortify (cannot fortify the starting territory)
                                         boolean valid = false;
 
-                                        if (game.fortifyValidTerritories.contains(territory)) {
+                                        if (game.fortifyValidTerritories.contains(territory)) { // checks if clicked territory is connected to starting territory
                                             valid = true;
                                         }
 
                                         if (valid) {
-                                            game.moveTroops.removeAllItems();
+                                            game.moveTroops.removeAllItems(); // reset combobox
                                             game.fortifyFortifyingTerritory = territory;
 
                                             game.fortifyStatus.setText("fortify in progress");
@@ -738,10 +735,10 @@ public class Main extends JFrame {
                                             game.fortifySelectedTerritories.setText(game.fortifyStartingTerritory.name + " -> " + game.fortifyFortifyingTerritory.name);
 
                                             for (int i = 1; i <= game.fortifyStartingTerritory.troops -1; i++) {
-                                                game.moveTroops.addItem(String.valueOf(i));
+                                                game.moveTroops.addItem(String.valueOf(i)); // update combobox values; max amount of troops that can be moved is one less than the total # of troops present in the starting territory
                                             }
 
-                                            territory.opacity = 0.3F;
+                                            territory.opacity = 0.3F; // highlight ending territory
                                             repaint();
                                         }
                                     }
@@ -751,11 +748,11 @@ public class Main extends JFrame {
 
                     }
 
-                } else { // no territory clicked
+                } else { // click was not on any territory
                     if (game.phase.equals("draft")) {
-                        // unselect selected territories + reset indicators
+                        // unselect any selected territories + reset indicators
                         if (game.getTurn().undeployedTroops > 0) {
-                            if (game.draftSelectedTerritory != null) {
+                            if (game.draftSelectedTerritory != null) { // reset if selected
                                 game.draftSelectedTerritory.opacity = 1.0F;
                                 game.draftSelectedTerritory = null;
                                 repaint();
@@ -766,14 +763,14 @@ public class Main extends JFrame {
                         }
 
                     } else if (game.phase.equals("attack")) {
-                        // unselect selected territories + reset indicators
-                        if (game.attackStartingTerritory != null) {
+                        // unselect any selected territories + reset indicators
+                        if (game.attackStartingTerritory != null) { // reset if selected
                             game.attackStartingTerritory.removeAdjEnemyTerritoryHighlights();
 
                             game.attackStartingTerritory.opacity = 1.0F;
                             game.attackStartingTerritory = null;
 
-                            if (game.attackAttackingTerritory != null) {
+                            if (game.attackAttackingTerritory != null) { // reset if selected
                                 game.attackAttackingTerritory.opacity = 1.0F;
                                 game.attackAttackingTerritory = null;
 
@@ -790,13 +787,13 @@ public class Main extends JFrame {
                         }
 
                     } else if (game.phase.equals("fortify")) {
-                        // unselect selected territories + reset indicators
+                        // unselect any selected territories + reset indicators
                         if (!game.fortifyStatus.getText().equals("fortify complete")) {
-                            if (game.fortifyStartingTerritory != null) {
+                            if (game.fortifyStartingTerritory != null) { // reset if selected
                                 game.fortifyStartingTerritory.opacity = 1.0F;
                                 game.fortifyStartingTerritory = null;
 
-                                if (game.fortifyFortifyingTerritory != null) {
+                                if (game.fortifyFortifyingTerritory != null) { // reset if selected
                                     game.fortifyFortifyingTerritory.opacity = 1.0F;
                                     game.fortifyFortifyingTerritory = null;
 
@@ -820,41 +817,41 @@ public class Main extends JFrame {
 
         // draft phase btns
         game.addTroopsBtn.addActionListener(e -> {
-            game.draftSelectedTerritory.updateTroops(Integer.parseInt(game.addTroops.getSelectedItem().toString()));
+            game.draftSelectedTerritory.updateTroops(Integer.parseInt(game.addTroops.getSelectedItem().toString())); // add troops to selected territory based on combobox selection
 
-            game.getTurn().undeployedTroops -= Integer.parseInt(game.addTroops.getSelectedItem().toString());
+            game.getTurn().undeployedTroops -= Integer.parseInt(game.addTroops.getSelectedItem().toString()); // subtract troops from available undeployed troops
             game.availableTroops.setText("available troops: " + game.getTurn().undeployedTroops);
 
-            game.addTroops.removeAllItems();
+            game.addTroops.removeAllItems(); // reset combobox
 
-            if (game.getTurn().undeployedTroops == 0) {
+            if (game.getTurn().undeployedTroops == 0) { // reset all territories to original state if no more undeployed troops are present
                 game.draftStatus.setText("");
                 game.nextPhaseBtnContainer.setVisible(true);
                 game.getTurn().resetTerritoryColours();
 
-            } else {
+            } else { // more troops to be deployed
                 game.draftStatus.setText("select a territory");
 
-                for (int i = 1; i <= game.getTurn().undeployedTroops; i++) {
+                for (int i = 1; i <= game.getTurn().undeployedTroops; i++) { // update combobox with current # of undeployed troops
                     game.addTroops.addItem(String.valueOf(i));
                 }
             }
 
-            game.draftSelectedTerritory.opacity = 1.0F;
+            game.draftSelectedTerritory.opacity = 1.0F; // reset selected territory
             game.draftSelectedTerritory = null;
 
-            game.addTroopsPanel.setVisible(false);
+            game.addTroopsPanel.setVisible(false); // hide combobox + btn
             repaint();
         });
 
-        game.nextPhaseBtn.addActionListener(e -> {
+        game.nextPhaseBtn.addActionListener(e -> { // prepare attack phase
             game.phase = "attack";
             game.updateRoundInfoPanel();
             game.draftPhaseInfo.setVisible(false);
 
             game.attackPhaseInfo.setVisible(true);
 
-            game.getTurn().highlightAtkEligibleTerritories();
+            game.getTurn().highlightAtkEligibleTerritories(); // highlight eligible starting territories during atk phase
             repaint();
         });
 
@@ -865,7 +862,7 @@ public class Main extends JFrame {
             game.checkForWinner();
         });
 
-        game.endAttackBtn.addActionListener(e -> {
+        game.endAttackBtn.addActionListener(e -> { // prepare fortify phase
             game.phase = "fortify";
             game.updateRoundInfoPanel();
             game.attackPhaseInfo.setVisible(false);
@@ -873,23 +870,24 @@ public class Main extends JFrame {
             game.fortifyPhaseInfo.setVisible(true);
             game.fortifyStatus.setText("select a territory");
 
-            game.getTurn().resetTerritoryColours();
-            game.getTurn().highlightFortifyEligibleStartingTerritories();
+            game.getTurn().resetTerritoryColours(); // remove all highlights
+            game.getTurn().highlightFortifyEligibleStartingTerritories(); // highlight eligible starting territories in fortify phase
             repaint();
         });
 
         // fortify phase btns
         game.moveTroopsBtn.addActionListener(e -> {
+            // update troop counts of starting and ending territories
             game.fortifyStartingTerritory.updateTroops(Integer.parseInt(game.moveTroops.getSelectedItem().toString()) * -1);
             game.fortifyFortifyingTerritory.updateTroops(Integer.parseInt(game.moveTroops.getSelectedItem().toString()));
 
-            game.fortifyStartingTerritory.opacity = 1.0F;
+            game.fortifyStartingTerritory.opacity = 1.0F; // reset selected territories
             game.fortifyStartingTerritory = null;
 
             game.fortifyFortifyingTerritory.opacity = 1.0F;
             game.fortifyFortifyingTerritory = null;
 
-            game.getTurn().resetTerritoryColours();
+            game.getTurn().resetTerritoryColours(); // remove all highlights
 
             repaint();
 
@@ -900,8 +898,8 @@ public class Main extends JFrame {
             game.endTurnBtnContainer.setVisible(true);
         });
 
-        game.endTurnBtn.addActionListener(e -> {
-            game.getTurn().resetTerritoryColours(); // reset if troops were never moved
+        game.endTurnBtn.addActionListener(e -> { // prepare draft phase for next player
+            game.getTurn().resetTerritoryColours(); // reset highlights if troops were never moved (therefore not reset when move troops btn is clicked since it never was)
 
             game.phase = "draft";
             game.turnCounter++;
@@ -927,10 +925,15 @@ public class Main extends JFrame {
         pack();
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
-        setResizable(true);
+        setResizable(false);
         setVisible(true);
     }
 
+    /*
+    description: runs program
+    pre-condition: program is launched
+    post-condition: creates gui
+    */
     public static void main(String[] args) throws Exception {
         // apply look & feel before creating any swing elements
         try {

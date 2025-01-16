@@ -5,7 +5,6 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Path2D;
 import java.awt.geom.PathIterator;
 import java.io.BufferedInputStream;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
@@ -16,7 +15,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import javax.sound.sampled.*;
 
 public class Util {
-    // converts svg path to path2d shape/coordinates and scales down
+    /*
+    description: converts svg path to coordinates and draws path2d shape
+    pre-condition: called by Main during territory object creation; requires string corresponding to the id of the path of the territory to be drawn
+    post-condition: returns Path2D of desired territory to Main
+    */
     public static Path2D getPath2d(String territory) throws Exception {
         // add svg paths of all territories to map with territory names as the keys
         Map<String, HashMap<String, Object>> paths = getPaths();
@@ -59,6 +62,7 @@ public class Util {
             pathIterator.next();
         }
 
+        // rescale path2ds to be centered on screen
         AffineTransform scaleTransform = AffineTransform.getScaleInstance(0.7, 0.7);
         AffineTransform translate = AffineTransform.getTranslateInstance(143, 40);
 
@@ -68,6 +72,11 @@ public class Util {
         return path2D;
     }
 
+    /*
+    description: converts JSON file containing SVG paths of each territory into a map
+    pre-condition: called by getPath2d
+    post-condition: returns map containing the ids and paths of all territory outlines to getPath2d
+    */
     public static Map<String, HashMap<String, Object>> getPaths() throws IOException {
         // create an ObjectMapper instance
         ObjectMapper objectMapper = new ObjectMapper();
@@ -78,7 +87,7 @@ public class Util {
                 objectMapper.getTypeFactory().constructCollectionType(List.class, HashMap.class)
         );
 
-        // Convert the List to a Map with "id" as the key
+        // convert list to map with "id" as the key
         return list.stream()
                 .collect(Collectors.toMap(
                         item -> (String) item.get("id"),
@@ -86,6 +95,11 @@ public class Util {
                 ));
     }
 
+    /*
+    description: plays the game soundtrack in a loop
+    pre-condition: called by playButton in Main
+    post-condition: loops the soundtrack infinitely while the program runs
+    */
     public static void playSoundtrack() {
         try {
             InputStream soundFile = Util.class.getResourceAsStream("/riskSoundtrack.wav");
